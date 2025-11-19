@@ -34,6 +34,157 @@
       "difficulty": "easy",
       "source_type": "mock",
       "tags": ["compute", "credit_usage"]
+    },
+
+    {
+      "id": "SPC-WH-001",
+      "question": "What happens to running queries when a warehouse is resized?",
+      "options": [
+        "They fail immediately",
+        "They continue on old resources",
+        "They migrate to new clusters",
+        "They must be restarted"
+      ],
+      "correct_index": 1,
+      "explanation": "Only new queries use the new size; running ones continue unchanged.",
+      "topic": "warehouses",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["resize"]
+    },
+    {
+      "id": "SPC-WH-002",
+      "question": "Which warehouse mode supports auto-scaling?",
+      "options": ["Standard", "Multi-cluster", "Legacy", "Warehouse groups"],
+      "correct_index": 1,
+      "explanation": "Multi-cluster warehouses allow scaling out for concurrency.",
+      "topic": "warehouses",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["multi_cluster"]
+    },
+    {
+      "id": "SPC-WH-003",
+      "question": "What determines a warehouse credit consumption rate?",
+      "options": [
+        "Storage usage",
+        "Warehouse size",
+        "Number of tables queried",
+        "Number of databases"
+      ],
+      "correct_index": 1,
+      "explanation": "Credit usage is based on warehouse size (XS, S, M, etc.).",
+      "topic": "warehouses",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["credits"]
+    },
+    {
+      "id": "SPC-WH-004",
+      "question": "What happens when a warehouse is suspended?",
+      "options": [
+        "Storage is deleted",
+        "Compute charges stop",
+        "All caches are cleared immediately",
+        "Schemas become inaccessible"
+      ],
+      "correct_index": 1,
+      "explanation": "Suspension halts compute charges but preserves cache until resume.",
+      "topic": "warehouses",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["suspension"]
+    },
+    {
+      "id": "SPC-WH-005",
+      "question": "Which warehouse setting automatically stops the warehouse after inactivity?",
+      "options": [
+        "Auto-cluster",
+        "Auto-resume",
+        "Auto-suspend",
+        "Auto-warehouse"
+      ],
+      "correct_index": 2,
+      "explanation": "Auto-suspend prevents unnecessary credit consumption.",
+      "topic": "warehouses",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["autosuspend"]
+    },
+    {
+      "id": "SPC-WH-006",
+      "question": "What happens when multiple users overload a small warehouse?",
+      "options": [
+        "Queries fail",
+        "Queries queue",
+        "Warehouse auto-resizes",
+        "Compute moves to cloud services layer"
+      ],
+      "correct_index": 1,
+      "explanation": "Concurrency overload leads to queued queries unless multi-cluster scaling is enabled.",
+      "topic": "warehouses",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["concurrency"]
+    },
+    {
+      "id": "SPC-WH-007",
+      "question": "Which warehouse parameter controls the maximum number of clusters?",
+      "options": [
+        "CLUSTER_LIMIT",
+        "MAX_CLUSTER_COUNT",
+        "WAREHOUSE_SIZE",
+        "AUTO_MAX"
+      ],
+      "correct_index": 1,
+      "explanation": "MAX_CLUSTER_COUNT sets the upper scaling limit for multi-cluster warehouses.",
+      "topic": "warehouses",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["parameters"]
+    },
+    {
+      "id": "SPC-WH-008",
+      "question": "What happens if auto-resume is disabled and a query is issued?",
+      "options": [
+        "Query fails",
+        "Warehouse resumes manually",
+        "Warehouse auto-resumes anyway",
+        "Query triggers an error but resumes warehouse"
+      ],
+      "correct_index": 0,
+      "explanation": "Queries fail unless auto-resume is enabled or warehouse is manually resumed.",
+      "topic": "warehouses",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["auto_resume"]
+    },
+    {
+      "id": "SPC-WH-009",
+      "question": "Which warehouse state consumes credits?",
+      "options": ["Running", "Suspended", "Created but unused", "Deleted"],
+      "correct_index": 0,
+      "explanation": "Credits are consumed only when the warehouse is running.",
+      "topic": "warehouses",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["credits"]
+    },
+    {
+      "id": "SPC-WH-010",
+      "question": "Why would an organization use multiple warehouses?",
+      "options": [
+        "To reduce storage",
+        "To isolate compute workloads",
+        "To reduce time travel costs",
+        "To share warehouses across accounts"
+      ],
+      "correct_index": 1,
+      "explanation": "Multiple warehouses isolate workloads, improve concurrency, and simplify cost attribution.",
+      "topic": "warehouses",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["isolation"]
     }
   ],
 
@@ -78,6 +229,157 @@
       "difficulty": "easy",
       "source_type": "mock",
       "tags": ["micro_partitions"]
+    },
+
+    {
+      "id": "SPC-ST-001",
+      "question": "What is the basic storage unit in Snowflake?",
+      "options": ["Row", "Block", "Micro-partition", "Shard"],
+      "correct_index": 2,
+      "explanation": "Snowflake stores data in micro-partitions.",
+      "topic": "storage",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["micro_partitions"]
+    },
+    {
+      "id": "SPC-ST-002",
+      "question": "Which type of compression does Snowflake use?",
+      "options": [
+        "Gzip only",
+        "Snappy only",
+        "Columnar compression chosen automatically",
+        "No compression"
+      ],
+      "correct_index": 2,
+      "explanation": "Snowflake automatically applies optimal column-based compression.",
+      "topic": "storage",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["compression"]
+    },
+    {
+      "id": "SPC-ST-003",
+      "question": "What is a characteristic of micro-partitions?",
+      "options": [
+        "They are user-configurable",
+        "They are typically 50–500 MB compressed",
+        "They store uncompressed data",
+        "They store row-based segments"
+      ],
+      "correct_index": 1,
+      "explanation": "Micro-partitions are automatically sized between 50–500 MB compressed.",
+      "topic": "storage",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["sizes"]
+    },
+    {
+      "id": "SPC-ST-004",
+      "question": "How does clustering key affect storage?",
+      "options": [
+        "It increases storage cost",
+        "It reduces storage cost",
+        "It may reorganize micro-partitions",
+        "It removes time travel data"
+      ],
+      "correct_index": 2,
+      "explanation": "Clustering may reorganize micro-partitions for better query performance.",
+      "topic": "storage",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["clustering"]
+    },
+    {
+      "id": "SPC-ST-005",
+      "question": "Snowflake Time Travel stores which type of data?",
+      "options": [
+        "Only deleted rows",
+        "Only dropped tables",
+        "All historical changes up to retention period",
+        "No changed data"
+      ],
+      "correct_index": 2,
+      "explanation": "Time Travel retains historical table versions.",
+      "topic": "storage",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["time_travel"]
+    },
+    {
+      "id": "SPC-ST-006",
+      "question": "What happens after Time Travel period expires?",
+      "options": [
+        "Data is archived indefinitely",
+        "Data moves into Fail-safe",
+        "Data becomes read-only",
+        "Data is exported to S3"
+      ],
+      "correct_index": 1,
+      "explanation": "Expired data goes to Fail-safe for 7 days.",
+      "topic": "storage",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["fail_safe"]
+    },
+    {
+      "id": "SPC-ST-007",
+      "question": "What is the purpose of the Fail-safe period?",
+      "options": [
+        "Performance optimization",
+        "User recovery",
+        "Disaster recovery controlled by Snowflake",
+        "Compression testing"
+      ],
+      "correct_index": 2,
+      "explanation": "Fail-safe exists for Snowflake-managed disaster recovery.",
+      "topic": "storage",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["disaster_recovery"]
+    },
+    {
+      "id": "SPC-ST-008",
+      "question": "Which storage layer feature improves performance on repeated queries?",
+      "options": [
+        "Result cache",
+        "Metadata cache",
+        "Remote disk cache",
+        "Data clustering"
+      ],
+      "correct_index": 1,
+      "explanation": "Metadata cache enables faster access to table and partition metadata.",
+      "topic": "storage",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["metadata"]
+    },
+    {
+      "id": "SPC-ST-009",
+      "question": "Which Snowflake objects store external data?",
+      "options": ["External tables", "Views", "Schemas", "UDFs"],
+      "correct_index": 0,
+      "explanation": "External tables reference data stored outside Snowflake.",
+      "topic": "storage",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["external"]
+    },
+    {
+      "id": "SPC-ST-010",
+      "question": "How can you inspect micro-partition metadata?",
+      "options": [
+        "DESCRIBE MICROPARTITIONS",
+        "SYSTEM$CLUSTERING_INFORMATION",
+        "SHOW STORAGE",
+        "DESCRIBE COLUMN"
+      ],
+      "correct_index": 1,
+      "explanation": "SYSTEM$CLUSTERING_INFORMATION reveals micro-partition metadata.",
+      "topic": "storage",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["micro_partitions", "system_functions"]
     }
   ],
 
@@ -122,7 +424,7 @@
       "question": "What is the maximum retention period for Time Travel in Enterprise Edition?",
       "options": ["1 day", "3 days", "7 days", "90 days"],
       "correct_index": 1,
-      "explanation": "Enterprise Edition allows up to 3 days of Time Travel retention by default.",
+      "explanation": "Enterprise Edition allows up to 3 days of Time Travel retention.",
       "topic": "data_protection",
       "difficulty": "easy",
       "source_type": "mock",
@@ -154,7 +456,7 @@
         "It gets automatically cloned"
       ],
       "correct_index": 1,
-      "explanation": "Expired table versions move to Fail-safe for 7 days for disaster recovery.",
+      "explanation": "Expired table versions move to Fail-safe for 7 days.",
       "topic": "data_protection",
       "difficulty": "medium",
       "source_type": "mock",
@@ -219,6 +521,162 @@
       "difficulty": "easy",
       "source_type": "mock",
       "tags": ["sharing"]
+    },
+
+    {
+      "id": "SPC-DS-001",
+      "question": "What is the main benefit of Snowflake Secure Data Sharing?",
+      "options": [
+        "Data is copied to each consumer account",
+        "A single data copy is shared using metadata pointers",
+        "Data is exported as files",
+        "Producers must replicate data manually"
+      ],
+      "correct_index": 1,
+      "explanation": "Secure Data Sharing uses metadata pointers, so consumers query data without copies.",
+      "topic": "data_sharing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["secure_sharing"]
+    },
+    {
+      "id": "SPC-DS-002",
+      "question": "Who pays for compute usages when a consumer queries shared data?",
+      "options": [
+        "Producer",
+        "Consumer",
+        "Both producer and consumer",
+        "Nobody, queries are free"
+      ],
+      "correct_index": 1,
+      "explanation": "Consumers always pay compute for querying shared data.",
+      "topic": "data_sharing",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["billing", "sharing"]
+    },
+    {
+      "id": "SPC-DS-003",
+      "question": "Which object is required to share database objects with another account?",
+      "options": ["Stage", "Warehouse", "Share", "Secure view"],
+      "correct_index": 2,
+      "explanation": "A Share object defines what data is shared and with whom.",
+      "topic": "data_sharing",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["share_object"]
+    },
+    {
+      "id": "SPC-DS-004",
+      "question": "Which Snowflake edition is required for secure data sharing?",
+      "options": [
+        "Standard",
+        "Enterprise or higher",
+        "Business Critical only",
+        "Any edition with replication"
+      ],
+      "correct_index": 0,
+      "explanation": "Secure Data Sharing is available in all Snowflake editions.",
+      "topic": "data_sharing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["editions"]
+    },
+    {
+      "id": "SPC-DS-005",
+      "question": "What type of objects can be shared with a Share?",
+      "options": [
+        "Tables, secure views, secure UDFs",
+        "Warehouse configurations",
+        "Pipes and tasks",
+        "Storage integrations"
+      ],
+      "correct_index": 0,
+      "explanation": "Only certain objects like tables and secure views can be shared, not compute objects.",
+      "topic": "data_sharing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["shareable_objects"]
+    },
+    {
+      "id": "SPC-DS-006",
+      "question": "How can a producer revoke access to shared data?",
+      "options": [
+        "Drop the consumer account",
+        "Disable auto-suspend",
+        "Remove the consumer from the share",
+        "Rotate the RSA keys"
+      ],
+      "correct_index": 2,
+      "explanation": "Consumers are linked to shares; removing them revokes access.",
+      "topic": "data_sharing",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["revocation"]
+    },
+    {
+      "id": "SPC-DS-007",
+      "question": "What happens to shared data when the producer updates a table?",
+      "options": [
+        "Consumers must manually refresh",
+        "Consumers see updated data immediately",
+        "Consumers only see data after 24 hours",
+        "Updated data is copied to consumers"
+      ],
+      "correct_index": 1,
+      "explanation": "Consumers query the producer’s live data, so updates are immediate.",
+      "topic": "data_sharing",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["live_data"]
+    },
+    {
+      "id": "SPC-DS-008",
+      "question": "Which type of view can be shared securely?",
+      "options": [
+        "Regular view",
+        "Secure view",
+        "Materialized view only",
+        "External view only"
+      ],
+      "correct_index": 1,
+      "explanation": "Secure views protect underlying details and are required for sharing.",
+      "topic": "data_sharing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["views"]
+    },
+    {
+      "id": "SPC-DS-009",
+      "question": "Can Snowflake shares be used across cloud providers?",
+      "options": [
+        "Yes, using data exchange",
+        "No, direct shares require same cloud + region",
+        "Yes, but only between marketplaces",
+        "Only with a replication add-on"
+      ],
+      "correct_index": 1,
+      "explanation": "Direct sharing requires the same region and cloud; cross-cloud sharing requires replication.",
+      "topic": "data_sharing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["regions"]
+    },
+    {
+      "id": "SPC-DS-010",
+      "question": "Which of the following can consumers NOT do with shared data?",
+      "options": [
+        "Query it",
+        "Create schemas on it",
+        "Join shared tables with local tables",
+        "Clone shared objects in their account"
+      ],
+      "correct_index": 1,
+      "explanation": "Consumers cannot create new objects inside a shared database.",
+      "topic": "data_sharing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["consumer_limits"]
     }
   ],
 
@@ -238,6 +696,132 @@
       "difficulty": "medium",
       "source_type": "mock",
       "tags": ["billing", "monitoring"]
+    },
+
+    {
+      "id": "SPC-AD-001",
+      "question": "Which role is responsible for creating and managing users?",
+      "options": ["SYSADMIN", "ACCOUNTADMIN", "SECURITYADMIN", "PUBLIC"],
+      "correct_index": 2,
+      "explanation": "SECURITYADMIN manages users, roles, and grants.",
+      "topic": "administration",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["roles"]
+    },
+    {
+      "id": "SPC-AD-002",
+      "question": "Which Snowflake role can create warehouses?",
+      "options": ["PUBLIC", "SYSADMIN", "USERADMIN", "ORGADMIN"],
+      "correct_index": 1,
+      "explanation": "SYSADMIN creates and manages compute resources.",
+      "topic": "administration",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["warehouses"]
+    },
+    {
+      "id": "SPC-AD-003",
+      "question": "What does the USERADMIN role typically manage?",
+      "options": ["Warehouses", "Users", "File formats", "Shares"],
+      "correct_index": 1,
+      "explanation": "USERADMIN manages user creation and role assignments.",
+      "topic": "administration",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["users"]
+    },
+    {
+      "id": "SPC-AD-004",
+      "question": "Which view provides login attempts and success/failure information?",
+      "options": ["LOGIN_HISTORY", "LOGIN_EVENTS", "QUERY_HISTORY", "USERS"],
+      "correct_index": 0,
+      "explanation": "LOGIN_HISTORY tracks authentication attempts.",
+      "topic": "administration",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["audit"]
+    },
+    {
+      "id": "SPC-AD-005",
+      "question": "Which object can be used to categorize compute usage by team?",
+      "options": ["File format", "Warehouse", "Stage", "Pipe"],
+      "correct_index": 1,
+      "explanation": "Teams can use dedicated warehouses for compute isolation and tracking.",
+      "topic": "administration",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["warehouses"]
+    },
+    {
+      "id": "SPC-AD-006",
+      "question": "Which role has full control of Snowflake security policies?",
+      "options": ["ACCOUNTADMIN", "SECURITYADMIN", "SYSADMIN", "PUBLIC"],
+      "correct_index": 1,
+      "explanation": "SECURITYADMIN manages policies, grants, and access control.",
+      "topic": "administration",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["security"]
+    },
+    {
+      "id": "SPC-AD-007",
+      "question": "Which command shows all privileges granted to a role?",
+      "options": [
+        "SHOW USERS",
+        "SHOW GRANTS TO ROLE",
+        "LS",
+        "SELECT ROLE_HISTORY"
+      ],
+      "correct_index": 1,
+      "explanation": "SHOW GRANTS TO ROLE displays assigned role privileges.",
+      "topic": "administration",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["grants"]
+    },
+    {
+      "id": "SPC-AD-008",
+      "question": "Which object is helpful for limiting credit usage?",
+      "options": [
+        "File format",
+        "Resource monitor",
+        "Future grants",
+        "Materialized view"
+      ],
+      "correct_index": 1,
+      "explanation": "Resource monitors track and control credit usage.",
+      "topic": "administration",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["resource_monitor"]
+    },
+    {
+      "id": "SPC-AD-009",
+      "question": "Which role should be used to grant privileges on databases and schemas?",
+      "options": ["SYSADMIN", "ACCOUNTADMIN", "SECURITYADMIN", "USERADMIN"],
+      "correct_index": 0,
+      "explanation": "SYSADMIN owns data structures and grants privileges on them.",
+      "topic": "administration",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["roles"]
+    },
+    {
+      "id": "SPC-AD-010",
+      "question": "Who can create a custom role?",
+      "options": [
+        "ACCOUNTADMIN only",
+        "SECURITYADMIN or ACCOUNTADMIN",
+        "Any user",
+        "ORGADMIN only"
+      ],
+      "correct_index": 1,
+      "explanation": "Both SECURITYADMIN and ACCOUNTADMIN can create roles.",
+      "topic": "administration",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["roles", "custom_roles"]
     }
   ],
 
@@ -282,7 +866,7 @@
       "question": "Which Snowflake object tracks changes made to a table for CDC operations?",
       "options": ["Task", "Stream", "Pipe", "Sequence"],
       "correct_index": 1,
-      "explanation": "Streams record table change data for downstream processing.",
+      "explanation": "Streams capture table change data.",
       "topic": "cdc",
       "difficulty": "medium",
       "source_type": "mock",
@@ -296,7 +880,7 @@
       "question": "Which Snowflake feature lets you automate SQL execution at defined intervals?",
       "options": ["Snowpipe", "Tasks", "Pipes", "Streams"],
       "correct_index": 1,
-      "explanation": "Tasks are used for scheduled or dependency-based SQL execution.",
+      "explanation": "Snowflake Tasks run SQL on a schedule or dependency chain.",
       "topic": "automation",
       "difficulty": "easy",
       "source_type": "mock",
@@ -320,6 +904,167 @@
       "difficulty": "easy",
       "source_type": "mock",
       "tags": ["costs"]
+    },
+
+    {
+      "id": "SPC-BL-001",
+      "question": "Which component normally accounts for the largest portion of Snowflake costs?",
+      "options": [
+        "Storage",
+        "Compute (warehouses)",
+        "Cloud services layer",
+        "Data sharing"
+      ],
+      "correct_index": 1,
+      "explanation": "Compute generally produces the highest cost.",
+      "topic": "billing",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["compute_costs"]
+    },
+    {
+      "id": "SPC-BL-002",
+      "question": "When do Cloud Services charges apply?",
+      "options": [
+        "For every query",
+        "When metadata operations exceed 10% of warehouse credit usage",
+        "Only with Business Critical edition",
+        "Only when storage is queried"
+      ],
+      "correct_index": 1,
+      "explanation": "Cloud Services charges apply when metadata operations exceed 10% of compute usage.",
+      "topic": "billing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["services"]
+    },
+    {
+      "id": "SPC-BL-003",
+      "question": "How is storage billed in Snowflake?",
+      "options": [
+        "By table size only",
+        "By compressed size stored in micro-partitions",
+        "By uncompressed raw data size",
+        "Flat fee per table"
+      ],
+      "correct_index": 1,
+      "explanation": "Storage is billed based on compressed micro-partition data.",
+      "topic": "billing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["storage"]
+    },
+    {
+      "id": "SPC-BL-004",
+      "question": "How often is storage usage calculated?",
+      "options": [
+        "Every second",
+        "Daily average",
+        "Hourly average",
+        "Weekly average"
+      ],
+      "correct_index": 2,
+      "explanation": "Snowflake calculates storage using hourly averages.",
+      "topic": "billing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["storage_billing"]
+    },
+    {
+      "id": "SPC-BL-005",
+      "question": "Which of these impacts compute cost?",
+      "options": [
+        "Warehouse size and runtime",
+        "Number of queries",
+        "Number of users",
+        "Total data storage"
+      ],
+      "correct_index": 0,
+      "explanation": "Compute is billed based on warehouse size (credits/hour).",
+      "topic": "billing",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["compute"]
+    },
+    {
+      "id": "SPC-BL-006",
+      "question": "How can you prevent unexpected credit usage?",
+      "options": [
+        "Create a resource monitor",
+        "Disable time travel",
+        "Use small micro-partitions",
+        "Use clustering keys"
+      ],
+      "correct_index": 0,
+      "explanation": "Resource monitors enforce credit thresholds.",
+      "topic": "billing",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["resource_monitors"]
+    },
+    {
+      "id": "SPC-BL-007",
+      "question": "Does suspending a warehouse delete its cache?",
+      "options": [
+        "Yes immediately",
+        "No, the cache persists",
+        "Only after 24 hours",
+        "It depends on size"
+      ],
+      "correct_index": 1,
+      "explanation": "Suspension stops billing but preserves cache until resume.",
+      "topic": "billing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["warehouses"]
+    },
+    {
+      "id": "SPC-BL-008",
+      "question": "Which feature allows tracking credit usage over time?",
+      "options": [
+        "ACCOUNT_USAGE views",
+        "File formats",
+        "Stages",
+        "Result caching"
+      ],
+      "correct_index": 0,
+      "explanation": "ACCOUNT_USAGE provides credit usage reports.",
+      "topic": "billing",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["usage"]
+    },
+    {
+      "id": "SPC-BL-009",
+      "question": "What effect does multi-cluster warehouses have on billing?",
+      "options": [
+        "Charges remain same",
+        "Charges increase as more clusters activate",
+        "No compute charges apply",
+        "Storage cost increases"
+      ],
+      "correct_index": 1,
+      "explanation": "More active clusters = more compute cost.",
+      "topic": "billing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["multi_cluster"]
+    },
+    {
+      "id": "SPC-BL-010",
+      "question": "Where can you find storage usage history?",
+      "options": [
+        "STORAGE_USAGE view",
+        "RESOURCE_MONITORS",
+        "FILE_FORMATS",
+        "QUERY_HISTORY"
+      ],
+      "correct_index": 0,
+      "explanation": "ACCOUNT_USAGE.STORAGE_USAGE tracks hourly storage.",
+      "topic": "billing",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["account_usage"]
     }
   ]
 }
