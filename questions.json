@@ -1,0 +1,325 @@
+{
+  "architecture": [
+    {
+      "id": "SPC-0001",
+      "question": "Which Snowflake layer is responsible for transaction management and query optimization?",
+      "options": [
+        "Virtual Warehouse",
+        "Cloud Services Layer",
+        "Storage Layer",
+        "Result Cache"
+      ],
+      "correct_index": 1,
+      "explanation": "The Cloud Services layer handles authentication, query parsing, optimization, and metadata management.",
+      "topic": "architecture",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["architecture", "cloud_services"]
+    }
+  ],
+
+  "warehouses": [
+    {
+      "id": "SPC-0002",
+      "question": "What happens when a virtual warehouse is suspended?",
+      "options": [
+        "Stored data becomes inaccessible",
+        "Queries run slower",
+        "Compute stops and Snowflake stops charging for credits",
+        "The warehouse's cache is deleted immediately"
+      ],
+      "correct_index": 2,
+      "explanation": "Suspending a warehouse stops compute charges; the cache is preserved until the warehouse resumes or is restarted.",
+      "topic": "warehouses",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["compute", "credit_usage"]
+    }
+  ],
+
+  "caching": [
+    {
+      "id": "SPC-0003",
+      "question": "Which type of cache can be shared across users within the same virtual warehouse?",
+      "options": [
+        "Data Cache",
+        "Metadata Cache",
+        "Query Result Cache",
+        "Remote Disk Cache"
+      ],
+      "correct_index": 0,
+      "explanation": "The Data Cache (local disk cache) is shared among users on the same virtual warehouse.",
+      "topic": "caching",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["cache", "performance"]
+    }
+  ],
+
+  "storage": [
+    {
+      "id": "SPC-0004",
+      "question": "Which Snowflake object stores semi-structured data in a columnar micro-partitioned format?",
+      "options": ["Variant Column", "External Stage", "Schema", "File Format"],
+      "correct_index": 0,
+      "explanation": "The VARIANT type can store semi-structured data which Snowflake stores in micro-partitions like structured data.",
+      "topic": "storage",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["semi_structured", "variant"]
+    },
+    {
+      "id": "SPC-0011",
+      "question": "What is the smallest unit of storage in Snowflake’s architecture?",
+      "options": ["Row", "Column", "Stage", "Micro-partition"],
+      "correct_index": 3,
+      "explanation": "Snowflake stores data in columnar micro-partitions.",
+      "topic": "storage",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["micro_partitions"]
+    }
+  ],
+
+  "data_loading": [
+    {
+      "id": "SPC-0005",
+      "question": "Which command enables querying data stored in cloud storage without loading it into Snowflake tables?",
+      "options": [
+        "COPY INTO TABLE",
+        "CREATE STAGE",
+        "SELECT ... FROM EXTERNAL TABLE",
+        "INSERT INTO"
+      ],
+      "correct_index": 2,
+      "explanation": "External Tables allow querying data stored in external cloud storage.",
+      "topic": "data_loading",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["external_tables", "stages"]
+    },
+    {
+      "id": "SPC-0013",
+      "question": "What is a Pipe used for?",
+      "options": [
+        "Scheduling SQL tasks",
+        "Defining external tables",
+        "Continuous data loading via Snowpipe",
+        "Transforming data inside a table"
+      ],
+      "correct_index": 2,
+      "explanation": "A pipe is an object Snowpipe uses to automate continuous data ingestion.",
+      "topic": "data_loading",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["snowpipe"]
+    }
+  ],
+
+  "data_protection": [
+    {
+      "id": "SPC-0006",
+      "question": "What is the maximum retention period for Time Travel in Enterprise Edition?",
+      "options": ["1 day", "3 days", "7 days", "90 days"],
+      "correct_index": 1,
+      "explanation": "Enterprise Edition allows up to 3 days of Time Travel retention by default.",
+      "topic": "data_protection",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["time_travel"]
+    },
+    {
+      "id": "SPC-0010",
+      "question": "Which clause allows you to query historical data from Time Travel?",
+      "options": [
+        "FOR VERSION",
+        "AT SNAPSHOT",
+        "AT OR BEFORE",
+        "FOR SYSTEM_TIME"
+      ],
+      "correct_index": 2,
+      "explanation": "Snowflake uses AT or BEFORE to access historical table versions.",
+      "topic": "data_protection",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["time_travel"]
+    },
+    {
+      "id": "SPC-0016",
+      "question": "What happens to a table after its Time Travel period expires?",
+      "options": [
+        "It becomes read-only",
+        "It moves to Fail-safe",
+        "It is permanently deleted",
+        "It gets automatically cloned"
+      ],
+      "correct_index": 1,
+      "explanation": "Expired table versions move to Fail-safe for 7 days for disaster recovery.",
+      "topic": "data_protection",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["fail_safe"]
+    }
+  ],
+
+  "security": [
+    {
+      "id": "SPC-0007",
+      "question": "Which role has the highest level of privileges in a Snowflake account?",
+      "options": ["SYSADMIN", "ACCOUNTADMIN", "SECURITYADMIN", "PUBLIC"],
+      "correct_index": 1,
+      "explanation": "ACCOUNTADMIN is the top-level administrative role.",
+      "topic": "security",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["roles", "rbac"]
+    },
+    {
+      "id": "SPC-0017",
+      "question": "Which authentication method provides key-pair login capabilities?",
+      "options": [
+        "OAuth",
+        "SSO",
+        "Key-pair authentication",
+        "External browser authentication"
+      ],
+      "correct_index": 2,
+      "explanation": "Key-pair authentication uses private/public RSA keys.",
+      "topic": "security",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["authentication"]
+    },
+    {
+      "id": "SPC-0018",
+      "question": "Which Snowflake edition provides Tri-Secret Secure?",
+      "options": ["Standard", "Enterprise", "Business Critical", "Any edition"],
+      "correct_index": 2,
+      "explanation": "Tri-Secret Secure is available in Business Critical and higher.",
+      "topic": "security",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["encryption"]
+    }
+  ],
+
+  "data_sharing": [
+    {
+      "id": "SPC-0008",
+      "question": "What Snowflake feature allows secure data sharing without copying data?",
+      "options": [
+        "Materialized Views",
+        "Secure UDFs",
+        "Secure Data Sharing",
+        "Data Replication"
+      ],
+      "correct_index": 2,
+      "explanation": "Secure Data Sharing enables producers to share data without copying using metadata pointers.",
+      "topic": "data_sharing",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["sharing"]
+    }
+  ],
+
+  "administration": [
+    {
+      "id": "SPC-0009",
+      "question": "What is the purpose of a Resource Monitor?",
+      "options": [
+        "Monitor storage usage",
+        "Suspend warehouses when credit thresholds are reached",
+        "Track schema modifications",
+        "Manage network policies"
+      ],
+      "correct_index": 1,
+      "explanation": "Resource monitors help control credit consumption by suspending warehouses.",
+      "topic": "administration",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["billing", "monitoring"]
+    }
+  ],
+
+  "performance": [
+    {
+      "id": "SPC-0012",
+      "question": "Which Snowflake feature automatically optimizes file sizes, clustering, and micro-partitions?",
+      "options": [
+        "Clustering Keys",
+        "Automatic Clustering",
+        "Materialized Views",
+        "Streams"
+      ],
+      "correct_index": 1,
+      "explanation": "Automatic Clustering maintains optimal micro-partition organization.",
+      "topic": "performance",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["clustering"]
+    },
+    {
+      "id": "SPC-0020",
+      "question": "What type of view stores query results persistently and automatically maintains freshness?",
+      "options": [
+        "Logical view",
+        "Secure view",
+        "Materialized view",
+        "External view"
+      ],
+      "correct_index": 2,
+      "explanation": "Materialized views persist precomputed results for performance.",
+      "topic": "performance",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["materialized_views"]
+    }
+  ],
+
+  "cdc": [
+    {
+      "id": "SPC-0014",
+      "question": "Which Snowflake object tracks changes made to a table for CDC operations?",
+      "options": ["Task", "Stream", "Pipe", "Sequence"],
+      "correct_index": 1,
+      "explanation": "Streams record table change data for downstream processing.",
+      "topic": "cdc",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["streams"]
+    }
+  ],
+
+  "automation": [
+    {
+      "id": "SPC-0015",
+      "question": "Which Snowflake feature lets you automate SQL execution at defined intervals?",
+      "options": ["Snowpipe", "Tasks", "Pipes", "Streams"],
+      "correct_index": 1,
+      "explanation": "Tasks are used for scheduled or dependency-based SQL execution.",
+      "topic": "automation",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["tasks"]
+    }
+  ],
+
+  "billing": [
+    {
+      "id": "SPC-0019",
+      "question": "What is the primary factor driving compute cost in Snowflake?",
+      "options": [
+        "Database size",
+        "Number of schemas",
+        "Warehouse size and runtime",
+        "Number of users"
+      ],
+      "correct_index": 2,
+      "explanation": "Compute cost is based on warehouse size and how long it runs.",
+      "topic": "billing",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["costs"]
+    }
+  ]
+}
