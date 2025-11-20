@@ -1,8 +1,39 @@
+// =============================
+// Configuration
+// =============================
+const CONFIG = {
+  // Paste your published Google Sheets CSV URL here.
+  // Example: "https://docs.google.com/spreadsheets/d/.../pub?output=csv"
+  googleSheetsCsvUrl: "PASTE_YOUR_URL_TO_GOOGLE_SHEETS_HERE",
+};
+
+// =============================
+// Warning helpers
+// =============================
+function showWarning(msg) {
+  const el = document.getElementById("dataSourceWarning");
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.remove("d-none");
+}
+
+function clearWarning() {
+  const el = document.getElementById("dataSourceWarning");
+  if (!el) return;
+  el.textContent = "";
+  el.classList.add("d-none");
+}
+
+// =============================
+// State
+// =============================
 let questionsByTopic = {};
 let currentQuestions = [];
 let currentTopic = "all";
 let currentIndex = 0;
 
+// DOM elements
+const dataSourceSelect = document.getElementById("dataSourceSelect");
 const topicSelect = document.getElementById("topicSelect");
 const questionTitle = document.getElementById("questionTitle");
 const optionsContainer = document.getElementById("optionsContainer");
@@ -10,7 +41,11 @@ const feedback = document.getElementById("feedback");
 const nextBtn = document.getElementById("nextBtn");
 const questionMeta = document.getElementById("questionMeta");
 
-// Shuffle helper
+// =============================
+// Utility functions
+// =============================
+
+// Fisher–Yates shuffle
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -23,12 +58,126 @@ function buildAllQuestions() {
   return Object.values(questionsByTopic).flat();
 }
 
+// Parse a single CSV line handling quotes and commas
+function parseCsvLine(line) {
+  const result = [];
+  let current = "";
+  let inQuotes = false;
+
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+
+    if (char === '"') {
+      // Toggle quotes or handle escaped quotes ("")
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === "," && !inQuotes) {
+      result.push(current);
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  result.push(current);
+  return result;
+}
+
+// Convert CSV text to questionsByTopic structure
+function parseCsvToQuestionsByTopic(csvText) {
+  const lines = csvText
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter((l) => l.length > 0);
+
+  if (lines.length < 2) {
+    return {};
+  }
+
+  const headers = parseCsvLine(lines[0]).map((h) => h.trim());
+  const idx = (name) => headers.indexOf(name);
+
+  const topicIdx = idx("topic");
+  const idIdx = idx("id");
+  const questionIdx = idx("question");
+  const optionIdxs = [
+    idx("option1"),
+    idx("option2"),
+    idx("option3"),
+    idx("option4"),
+  ].filter((i) => i >= 0);
+  const correctIdxIdx = idx("correct_idx");
+  const explanationIdx = idx("explanation");
+  const difficultyIdx = idx("difficulty");
+  const sourceTypeIdx = idx("source_type");
+  const tagsIdx = idx("tags");
+
+  const result = {};
+
+  for (let i = 1; i < lines.length; i++) {
+    const row = parseCsvLine(lines[i]);
+    if (!row.length) continue;
+
+    const topic = String(row[topicIdx] || "").trim();
+    const questionText = String(row[questionIdx] || "").trim();
+    if (!topic || !questionText) continue;
+
+    const options = optionIdxs
+      .map((colIndex) => row[colIndex])
+      .filter((v) => v !== "" && v !== null && v !== undefined)
+      .map((v) => String(v));
+
+    const correctIndexValue = row[correctIdxIdx];
+    const correctIndex =
+      typeof correctIndexValue === "number"
+        ? correctIndexValue
+        : parseInt(correctIndexValue, 10);
+
+    const tagsValue = row[tagsIdx];
+    const tags =
+      typeof tagsValue === "string"
+        ? tagsValue
+            .split(",")
+            .map((t) => t.trim())
+            .filter(Boolean)
+        : [];
+
+    const q = {
+      id: String(row[idIdx] || "").trim(),
+      question: questionText,
+      options: options,
+      correct_index: isNaN(correctIndex) ? 0 : correctIndex,
+      explanation: String(row[explanationIdx] || "").trim(),
+      topic: topic,
+      difficulty: String(row[difficultyIdx] || "").trim() || "medium",
+      source_type: String(row[sourceTypeIdx] || "").trim() || "mock",
+      tags: tags,
+    };
+
+    if (!result[topic]) {
+      result[topic] = [];
+    }
+    result[topic].push(q);
+  }
+
+  return result;
+}
+
+// =============================
+// Quiz logic
+// =============================
 function loadTopic(topic) {
   currentTopic = topic;
-  currentQuestions =
-    topic === "all"
-      ? shuffle(buildAllQuestions().slice())
-      : shuffle(questionsByTopic[topic].slice());
+
+  if (topic === "all") {
+    currentQuestions = shuffle(buildAllQuestions().slice());
+  } else {
+    const arr = questionsByTopic[topic] || [];
+    currentQuestions = shuffle(arr.slice());
+  }
 
   currentIndex = 0;
   showQuestion();
@@ -45,7 +194,8 @@ function showQuestion() {
   }
 
   if (currentIndex >= currentQuestions.length) {
-    questionTitle.textContent = "You've completed all questions 🎉";
+    questionTitle.textContent =
+      "You have completed all questions in this topic.";
     questionMeta.textContent = "";
     return;
   }
@@ -72,52 +222,164 @@ function handleAnswer(question, chosenIndex, clickedButton) {
   if (isCorrect) {
     clickedButton.classList.replace("btn-outline-primary", "btn-success");
     feedback.innerHTML = `<div class="alert alert-success">
-      <strong>Correct!</strong><br>${question.explanation}
+      <strong>Correct.</strong><br>${question.explanation}
     </div>`;
   } else {
     clickedButton.classList.replace("btn-outline-primary", "btn-danger");
     const correctAnswer = question.options[question.correct_index];
     feedback.innerHTML = `<div class="alert alert-danger">
       <strong>Incorrect.</strong><br>
-      Correct: <strong>${correctAnswer}</strong><br>
+      Correct answer: <strong>${correctAnswer}</strong><br>
       ${question.explanation}
     </div>`;
   }
 }
 
-// Next question button
-nextBtn.addEventListener("click", () => {
-  currentIndex++;
-  showQuestion();
-});
+// =============================
+// UI Initialization
+// =============================
+function initUI() {
+  // Reset topic dropdown
+  topicSelect.innerHTML = "";
 
-// Load JSON
-fetch("questions.json")
-  .then((res) => res.json())
-  .then((data) => {
-    questionsByTopic = data;
+  const optionAll = document.createElement("option");
+  optionAll.value = "all";
+  optionAll.textContent = "All topics";
+  topicSelect.appendChild(optionAll);
 
-    // Fill dropdown
-    const optionAll = document.createElement("option");
-    optionAll.value = "all";
-    optionAll.textContent = "All topics";
-    topicSelect.appendChild(optionAll);
-
-    Object.keys(questionsByTopic).forEach((topic) => {
-      const opt = document.createElement("option");
-      opt.value = topic;
-      opt.textContent = topic;
-      topicSelect.appendChild(opt);
-    });
-
-    topicSelect.value = "all";
-    loadTopic("all");
-  })
-  .catch((err) => {
-    questionTitle.textContent = "Error loading questions.json 😢";
-    console.error(err);
+  Object.keys(questionsByTopic).forEach((topic) => {
+    const opt = document.createElement("option");
+    opt.value = topic;
+    opt.textContent = topic;
+    topicSelect.appendChild(opt);
   });
 
-topicSelect.addEventListener("change", () => {
-  loadTopic(topicSelect.value);
-});
+  topicSelect.value = "all";
+
+  topicSelect.onchange = () => {
+    loadTopic(topicSelect.value);
+  };
+
+  nextBtn.onclick = () => {
+    currentIndex++;
+    showQuestion();
+  };
+
+  loadTopic("all");
+}
+
+// =============================
+// Data loading (Sheets + JSON)
+// =============================
+function loadFromJson() {
+  console.info("Loading questions from local questions.json...");
+  questionTitle.textContent = "Loading questions from local file...";
+  optionsContainer.innerHTML = "";
+  feedback.innerHTML = "";
+
+  fetch("questions.json")
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error("Failed to fetch questions.json");
+      }
+      return res.json();
+    })
+    .then((data) => {
+      questionsByTopic = data;
+      initUI();
+    })
+    .catch((err) => {
+      console.error("Error loading questions.json:", err);
+      questionTitle.textContent = "Error loading questions from local file.";
+    });
+}
+
+function loadFromGoogleSheets() {
+  const noRealUrl =
+    !CONFIG.googleSheetsCsvUrl ||
+    CONFIG.googleSheetsCsvUrl === "PASTE_YOUR_URL_TO_GOOGLE_SHEETS_HERE";
+
+  if (noRealUrl) {
+    showWarning(
+      "No Google Sheets URL is configured, so the app is using the built-in local questions instead. Add a published Sheets CSV URL in app.js to load shared questions."
+    );
+    loadFromJson();
+    return;
+  }
+
+  console.info("Attempting to load questions from Google Sheets...");
+
+  fetch(CONFIG.googleSheetsCsvUrl)
+    .then((res) => {
+      if (!res.ok) {
+        showWarning(
+          "We couldn’t load questions from Google Sheets, so the app is using the built-in local questions instead. Your quiz still works, but changes in the sheet won’t show up until the connection issue is fixed."
+        );
+        throw new Error("Google Sheets fetch failed");
+      }
+      return res.text();
+    })
+    .then((csvText) => {
+      const parsed = parseCsvToQuestionsByTopic(csvText);
+
+      if (!Object.keys(parsed).length) {
+        showWarning(
+          "Google Sheets responded, but no valid questions were found. The app has switched to the built-in local questions. Please check that your sheet uses the expected columns."
+        );
+        loadFromJson();
+        return;
+      }
+
+      questionsByTopic = parsed;
+      initUI();
+    })
+    .catch((err) => {
+      console.error(err);
+      showWarning(
+        "We couldn’t load questions from Google Sheets, so the app is using the built-in local questions instead. Your quiz still works, but it won’t reflect the latest sheet changes until the connection is restored."
+      );
+      loadFromJson();
+    });
+}
+
+// Decide which loader to use
+function loadDataBySource(source) {
+  clearWarning();
+  if (source === "local") {
+    loadFromJson();
+  } else {
+    loadFromGoogleSheets();
+  }
+}
+
+// =============================
+// Entry point
+// =============================
+(function init() {
+  const noRealUrl =
+    !CONFIG.googleSheetsCsvUrl ||
+    CONFIG.googleSheetsCsvUrl === "PASTE_YOUR_URL_TO_GOOGLE_SHEETS_HERE";
+
+  if (noRealUrl) {
+    if (dataSourceSelect) {
+      dataSourceSelect.value = "local";
+    }
+    showWarning(
+      "No Google Sheets URL is configured, so the app is using the built-in local questions instead. Add a published Sheets CSV URL in app.js to load shared questions."
+    );
+    loadDataBySource("local");
+  } else {
+    if (dataSourceSelect) {
+      dataSourceSelect.value = "sheets";
+    }
+    loadDataBySource("sheets");
+  }
+
+  // Handle user switching data source
+  if (dataSourceSelect) {
+    dataSourceSelect.onchange = () => {
+      const source = dataSourceSelect.value;
+      loadDataBySource(source);
+    };
+  }
+})();
