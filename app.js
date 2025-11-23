@@ -4,7 +4,8 @@
 const CONFIG = {
   // Paste your published Google Sheets CSV URL here.
   // Example: "https://docs.google.com/spreadsheets/d/.../pub?output=csv"
-  googleSheetsCsvUrl: "PASTE_YOUR_URL_TO_GOOGLE_SHEETS_HERE",
+  googleSheetsCsvUrl:
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vRxj3tzXYa5efhrk3NqNgs-yLBvDPTIl4naimGTceCp-QY0inE35CNUpILHAbr02jxKEJKLSLZPGTcT/pub?output=csv",
 };
 
 // =============================
@@ -285,7 +286,23 @@ function loadFromJson() {
       return res.json();
     })
     .then((data) => {
-      questionsByTopic = data;
+      // Support both:
+      // 1) { topic: [questions...] }
+      // 2) [ { topic: "...", ... }, ... ]
+      if (Array.isArray(data)) {
+        const grouped = {};
+        data.forEach((q) => {
+          const topic = q.topic || "misc";
+          if (!grouped[topic]) {
+            grouped[topic] = [];
+          }
+          grouped[topic].push(q);
+        });
+        questionsByTopic = grouped;
+      } else {
+        questionsByTopic = data;
+      }
+
       initUI();
     })
     .catch((err) => {
@@ -356,6 +373,7 @@ function loadDataBySource(source) {
 // Entry point
 // =============================
 (function init() {
+  console.log("Google Sheets URL:", CONFIG.googleSheetsCsvUrl);
   const noRealUrl =
     !CONFIG.googleSheetsCsvUrl ||
     CONFIG.googleSheetsCsvUrl === "PASTE_YOUR_URL_TO_GOOGLE_SHEETS_HERE";

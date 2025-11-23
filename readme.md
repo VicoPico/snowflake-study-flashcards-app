@@ -1,20 +1,25 @@
 # ❄️ SnowPro Core Quiz App
 
-A minimal web-based quiz application to help study for the **SnowPro Core Certification**.  
-Built using **HTML**, **Bootstrap**, **Vanilla JavaScript**, and **JSON** for question storage.
+A minimal web-based quiz application for studying the **SnowPro Core Certification**.
+Built using HTML, Bootstrap, and Vanilla JavaScript, with questions loaded from either a public Google Sheets CSV or a local questions.json file.
 
-This app loads practice questions from an external `questions.json` file and displays them in a simple, clean UI.  
-Perfect for self-study with potential to expanding into a more advanced study application
+The application supports question topics, randomized answers, explanations, and a simple interface suitable for self-study or team learning.
 
 ---
 
 ## Features
 
-- Load questions by topic from `questions.json`
+- Load questions by topic from
+  - A published Google Sheets CSV URL
+  - or local questions.json file (fallback)
+- Topic-based filtering
 - Shuffle questions automatically
+- Explanations for each answer
 - Display answer correctness + explanations
 - Lightweight and dependency-free
+- Fully client-side (no backend required)
 - Easy to extend with new topics/questions
+- Compatible with GitHub Pages and other static hosts
 
 ---
 
