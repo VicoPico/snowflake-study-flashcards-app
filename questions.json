@@ -1,937 +1,829 @@
-[
-  {
-    "id": "FCT-0001",
-    "question": "Which statement about Snowflake virtual warehouses is TRUE?",
-    "options": [
-      "A virtual warehouse provides compute resources only and does not store data.",
-      "A virtual warehouse is primarily used to store table data.",
-      "A virtual warehouse is a security container for roles.",
-      "A virtual warehouse is a metadata catalog for databases."
-    ],
-    "correct_index": 0,
-    "explanation": "In Snowflake, virtual warehouses are purely compute; data is stored in centralized storage, not in the warehouses.",
-    "topic": "warehouses",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["warehouses", "compute"]
-  },
-  {
-    "id": "FCT-0002",
-    "question": "In Snowflake, when do warehouses consume credits?",
-    "options": [
-      "Only while they are in the running state.",
-      "Only when a query is issued, regardless of state.",
-      "While they exist, even if suspended.",
-      "Only during data loading and not during queries."
-    ],
-    "correct_index": 0,
-    "explanation": "Warehouses consume credits only while running; suspended warehouses do not incur compute charges.",
-    "topic": "warehouses",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["warehouses", "billing"]
-  },
-  {
-    "id": "FCT-0003",
-    "question": "What happens when a Snowflake warehouse is SUSPENDED?",
-    "options": [
-      "It stops compute credit consumption immediately.",
-      "It deletes all tables in its database.",
-      "It becomes read-only but still consumes credits.",
-      "It drops all user roles associated with it."
-    ],
-    "correct_index": 0,
-    "explanation": "Suspending a warehouse immediately stops compute credit usage.",
-    "topic": "warehouses",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["warehouses", "suspension"]
-  },
-  {
-    "id": "FCT-0004",
-    "question": "When a Snowflake warehouse is resumed, what happens from a billing perspective?",
-    "options": [
-      "Billing starts again as soon as the warehouse becomes active.",
-      "Billing starts only after the first query runs.",
-      "Billing remains suspended until manual confirmation.",
-      "Billing resumes only after a data load operation."
-    ],
-    "correct_index": 0,
-    "explanation": "Once the warehouse is active (running), compute credit usage resumes.",
-    "topic": "warehouses",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["warehouses", "resume", "billing"]
-  },
-  {
-    "id": "FCT-0005",
-    "question": "True or false: Resizing a Snowflake warehouse interrupts any queries currently running on it.",
-    "options": [
-      "False. Running queries continue using the old warehouse size.",
-      "True. All running queries are cancelled when resizing.",
-      "True. Queries are paused and resumed on the new size.",
-      "False. Running queries automatically move to another warehouse."
-    ],
-    "correct_index": 0,
-    "explanation": "Running queries continue on the old resources; only new queries use the new size.",
-    "topic": "warehouses",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["warehouses", "resize"]
-  },
-  {
-    "id": "FCT-0006",
-    "question": "In a multi-cluster warehouse, how many clusters does a single query use?",
-    "options": [
-      "Exactly one cluster.",
-      "All available clusters at once.",
-      "Half of the clusters.",
-      "It randomly uses a varying number of clusters per query."
-    ],
-    "correct_index": 0,
-    "explanation": "Even in multi-cluster warehouses, a single query runs on a single cluster.",
-    "topic": "warehouses",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["warehouses", "multi_cluster"]
-  },
-  {
-    "id": "FCT-0007",
-    "question": "Which of the following describes multi-cluster warehouses in Snowflake?",
-    "options": [
-      "They can automatically add or remove clusters based on query concurrency.",
-      "They merge multiple databases into one logical view.",
-      "They automatically replicate storage across regions.",
-      "They are required for using Time Travel."
-    ],
-    "correct_index": 0,
-    "explanation": "Multi-cluster warehouses scale out by adding/removing clusters to handle concurrent workload.",
-    "topic": "warehouses",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["warehouses", "scaling"]
-  },
-  {
-    "id": "FCT-0008",
-    "question": "Do different Snowflake warehouses share their local cache?",
-    "options": [
-      "No, each warehouse has its own local cache.",
-      "Yes, they all share a single local cache.",
-      "Only warehouses of the same size share cache.",
-      "Only multi-cluster warehouses share cache."
-    ],
-    "correct_index": 0,
-    "explanation": "Local warehouse cache (SSD cache) is isolated per warehouse and is not shared.",
-    "topic": "warehouses",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["warehouses", "cache"]
-  },
-  {
-    "id": "FCT-0009",
-    "question": "Which of the following BEST describes how Snowflake stores table data?",
-    "options": [
-      "In compressed columnar micro-partitions.",
-      "In uncompressed row-based blocks.",
-      "In plain CSV files on the warehouse.",
-      "In a key-value store handled by each virtual warehouse."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake stores data in compressed, columnar micro-partitions in centralized storage.",
-    "topic": "storage",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["storage", "micro_partitions"]
-  },
-  {
-    "id": "FCT-0010",
-    "question": "Which statement about Snowflake micro-partitions is TRUE?",
-    "options": [
-      "Micro-partitions are immutable once created.",
-      "Micro-partitions are constantly updated in place.",
-      "Micro-partitions are user-managed physical partitions.",
-      "Micro-partitions must be manually merged by DBAs."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake creates immutable micro-partitions; new ones are created as data changes.",
-    "topic": "storage",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["storage", "micro_partitions"]
-  },
-  {
-    "id": "FCT-0011",
-    "question": "What does Snowflake store in micro-partition metadata?",
-    "options": [
-      "Information that helps prune data during queries.",
-      "Only role and privilege definitions.",
-      "Compiled query plans for each user.",
-      "Operating system details of the warehouses."
-    ],
-    "correct_index": 0,
-    "explanation": "Micro-partition metadata includes statistics used to prune data and optimize queries.",
-    "topic": "storage",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["storage", "metadata"]
-  },
-  {
-    "id": "FCT-0012",
-    "question": "Which Snowflake feature allows querying historical versions of table data?",
-    "options": [
-      "Time Travel",
-      "Fail-safe",
-      "Clustering",
-      "Search Optimization"
-    ],
-    "correct_index": 0,
-    "explanation": "Time Travel lets you query earlier versions of data using time or offset-based syntax.",
-    "topic": "storage",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["storage", "time_travel"]
-  },
-  {
-    "id": "FCT-0013",
-    "question": "After the Time Travel retention period expires, where does historical data go in Snowflake?",
-    "options": [
-      "It moves into Fail-safe for 7 days.",
-      "It is kept forever at no cost.",
-      "It is moved into a user-managed archive.",
-      "It is immediately and irreversibly deleted."
-    ],
-    "correct_index": 0,
-    "explanation": "Expired Time Travel data goes into Fail-safe for 7 days for Snowflake-managed recovery.",
-    "topic": "storage",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["storage", "fail_safe"]
-  },
-  {
-    "id": "FCT-0014",
-    "question": "How long does Fail-safe retain data in Snowflake?",
-    "options": [
-      "Exactly 7 days.",
-      "Exactly 24 hours.",
-      "Configurable between 1 and 90 days.",
-      "Until the user explicitly purges it."
-    ],
-    "correct_index": 0,
-    "explanation": "Fail-safe is a fixed 7-day period and cannot be changed or disabled.",
-    "topic": "storage",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["storage", "fail_safe"]
-  },
-  {
-    "id": "FCT-0015",
-    "question": "Which cost component does Time Travel and Fail-safe primarily affect?",
-    "options": [
-      "Storage cost.",
-      "Compute cost.",
-      "Cloud services cost only.",
-      "Network egress cost."
-    ],
-    "correct_index": 0,
-    "explanation": "Historical and Fail-safe data consume storage and therefore affect storage cost.",
-    "topic": "billing",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["billing", "storage"]
-  },
-  {
-    "id": "FCT-0016",
-    "question": "How is storage billed in Snowflake?",
-    "options": [
-      "Based on the compressed size of data in micro-partitions.",
-      "Based on the number of rows in each table.",
-      "Based only on raw uncompressed data size.",
-      "As a flat fee per database."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake bills storage on the compressed size of stored data (plus historical and Fail-safe).",
-    "topic": "billing",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["billing", "storage"]
-  },
-  {
-    "id": "FCT-0017",
-    "question": "Which factor most directly determines compute cost in Snowflake?",
-    "options": [
-      "Warehouse size and how long it runs.",
-      "Number of schemas in the account.",
-      "Number of databases created.",
-      "Total number of users."
-    ],
-    "correct_index": 0,
-    "explanation": "Compute cost is driven by warehouse size (credits/hour) and runtime.",
-    "topic": "billing",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["billing", "compute"]
-  },
-  {
-    "id": "FCT-0018",
-    "question": "True or false: Snowflake charges compute credits per second with a one-minute minimum.",
-    "options": [
-      "True. Credits are billed per second with a 60-second minimum.",
-      "False. Credits are always billed in full-hour increments.",
-      "False. Credits are billed only at the end of the month.",
-      "False. Compute is not billed in Snowflake."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake bills compute per second of warehouse runtime, with a 60-second minimum charge.",
-    "topic": "billing",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["billing", "compute"]
-  },
-  {
-    "id": "FCT-0019",
-    "question": "Which statement about Cloud Services charges in Snowflake is TRUE?",
-    "options": [
-      "They apply when metadata operations exceed a threshold relative to compute usage.",
-      "They apply only in Standard Edition.",
-      "They are charged only when storage is compressed.",
-      "They are charged only when Snowpipe is disabled."
-    ],
-    "correct_index": 0,
-    "explanation": "Cloud Services charges kick in when intensive metadata-related work exceeds a certain ratio of compute.",
-    "topic": "billing",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["billing", "cloud_services"]
-  },
-  {
-    "id": "FCT-0020",
-    "question": "Who pays for compute when a consumer queries data via Snowflake secure data sharing?",
-    "options": [
-      "The consumer account.",
-      "The provider (data-sharing) account.",
-      "The cloud provider.",
-      "No one; shared queries are free."
-    ],
-    "correct_index": 0,
-    "explanation": "Consumers always pay compute for their queries on shared data.",
-    "topic": "data_sharing",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["data_sharing", "billing"]
-  },
-  {
-    "id": "FCT-0021",
-    "question": "Which statement about secure data sharing in Snowflake is TRUE?",
-    "options": [
-      "Data is not copied; consumers access it via metadata pointers.",
-      "Data is physically copied into each consumer account.",
-      "Only CSV files can be shared.",
-      "Sharing always requires exporting data to external storage."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake sharing uses metadata pointers; the underlying data stays in the provider’s account.",
-    "topic": "data_sharing",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["data_sharing", "architecture"]
-  },
-  {
-    "id": "FCT-0022",
-    "question": "Which objects can be included in a Snowflake share?",
-    "options": [
-      "Tables and secure views.",
-      "Virtual warehouses and stages.",
-      "Tasks and sequences only.",
-      "Resource monitors and roles."
-    ],
-    "correct_index": 0,
-    "explanation": "Shares can include data objects such as tables, secure views, and secure UDFs, not compute or control objects.",
-    "topic": "data_sharing",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["data_sharing", "objects"]
-  },
-  {
-    "id": "FCT-0023",
-    "question": "Which statement about Snowflake database replication is TRUE?",
-    "options": [
-      "It can replicate databases across regions and cloud platforms.",
-      "It is limited to a single region per account.",
-      "It replicates warehouses but not databases.",
-      "It synchronizes data in real time with zero lag."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake supports cross-region and cross-cloud replication for databases.",
-    "topic": "replication",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["replication", "cross_region"]
-  },
-  {
-    "id": "FCT-0024",
-    "question": "Is database replication in Snowflake synchronous or asynchronous?",
-    "options": [
-      "Asynchronous.",
-      "Synchronous.",
-      "It is always real-time and synchronous.",
-      "It depends on warehouse size."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake database replication is asynchronous.",
-    "topic": "replication",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["replication", "async"]
-  },
-  {
-    "id": "FCT-0025",
-    "question": "Which edition is required to use database replication in Snowflake?",
-    "options": [
-      "Enterprise Edition or higher.",
-      "Standard Edition only.",
-      "Any edition, including trial.",
-      "Replication is a separate product, not tied to edition."
-    ],
-    "correct_index": 0,
-    "explanation": "Database replication requires Enterprise Edition or above.",
-    "topic": "replication",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["replication", "editions"]
-  },
-  {
-    "id": "FCT-0026",
-    "question": "Which Snowflake role is typically the highest-level administrative role in an account?",
-    "options": ["ACCOUNTADMIN", "SYSADMIN", "SECURITYADMIN", "PUBLIC"],
-    "correct_index": 0,
-    "explanation": "ACCOUNTADMIN has the highest level of privileges and is meant for account-level administration.",
-    "topic": "security",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["security", "roles"]
-  },
-  {
-    "id": "FCT-0027",
-    "question": "Which Snowflake role is primarily responsible for creating and managing users and roles?",
-    "options": ["SECURITYADMIN", "ACCOUNTADMIN", "SYSADMIN", "PUBLIC"],
-    "correct_index": 0,
-    "explanation": "SECURITYADMIN is responsible for security-related tasks including user and role management.",
-    "topic": "security",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["security", "roles"]
-  },
-  {
-    "id": "FCT-0028",
-    "question": "Snowflake’s access control model is best described as:",
-    "options": [
-      "Role-based access control (RBAC).",
-      "Discretionary access control (DAC).",
-      "Mandatory access control (MAC).",
-      "IP-based access control only."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake uses RBAC, where privileges are granted to roles and roles are granted to users.",
-    "topic": "security",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["security", "rbac"]
-  },
-  {
-    "id": "FCT-0029",
-    "question": "What is a key characteristic of role-based access control (RBAC) in Snowflake?",
-    "options": [
-      "Privileges are granted to roles, and roles are granted to users.",
-      "Privileges are granted only directly to users.",
-      "Access is controlled solely by network policy.",
-      "Privileges are automatically inferred from queries."
-    ],
-    "correct_index": 0,
-    "explanation": "RBAC decouples users from privileges by using roles as an intermediate abstraction.",
-    "topic": "security",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["security", "rbac"]
-  },
-  {
-    "id": "FCT-0030",
-    "question": "Which authentication method in Snowflake uses RSA key pairs?",
-    "options": [
-      "Key-pair authentication.",
-      "OAuth.",
-      "Username and password only.",
-      "SAML with MFA only."
-    ],
-    "correct_index": 0,
-    "explanation": "Key-pair authentication uses an RSA private key on the client side and a registered public key in Snowflake.",
-    "topic": "security",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["security", "authentication"]
-  },
-  {
-    "id": "FCT-0031",
-    "question": "Which Snowflake feature records how data was accessed and by whom?",
-    "options": [
-      "Access History.",
-      "Task history.",
-      "Cloud Services log.",
-      "Role hierarchy."
-    ],
-    "correct_index": 0,
-    "explanation": "Access History captures information about data access activities for governance and auditing.",
-    "topic": "governance",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["governance", "access_history"]
-  },
-  {
-    "id": "FCT-0032",
-    "question": "Which Snowflake feature allows attaching metadata like classification labels to tables and columns?",
-    "options": ["Object tagging.", "Sequences.", "Streams.", "File formats."],
-    "correct_index": 0,
-    "explanation": "Object tags allow you to add metadata (e.g., PII flags) to objects for governance.",
-    "topic": "governance",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["governance", "tags"]
-  },
-  {
-    "id": "FCT-0033",
-    "question": "Which Snowflake feature is used to dynamically mask sensitive data at query time?",
-    "options": [
-      "Masking policies.",
-      "Network policies.",
-      "Resource monitors.",
-      "Stages."
-    ],
-    "correct_index": 0,
-    "explanation": "Masking policies apply conditional transformations to sensitive columns at query time.",
-    "topic": "governance",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["governance", "masking"]
-  },
-  {
-    "id": "FCT-0034",
-    "question": "What is the purpose of Row Access Policies in Snowflake?",
-    "options": [
-      "To control which rows a given user can see.",
-      "To compress table data.",
-      "To schedule tasks.",
-      "To define external stages."
-    ],
-    "correct_index": 0,
-    "explanation": "Row Access Policies act as row-level security, restricting which rows are visible.",
-    "topic": "governance",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["governance", "row_access"]
-  },
-  {
-    "id": "FCT-0035",
-    "question": "Which Snowflake cache allows returning results without consuming compute credits?",
-    "options": [
-      "Result Cache.",
-      "Metadata cache.",
-      "Local disk cache.",
-      "Cloud Services cache."
-    ],
-    "correct_index": 0,
-    "explanation": "If a query is eligible for Result Cache, its results come from cache without using warehouse compute.",
-    "topic": "performance",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["performance", "result_cache"]
-  },
-  {
-    "id": "FCT-0036",
-    "question": "What does the Snowflake metadata cache primarily help with?",
-    "options": [
-      "Query planning and partition pruning.",
-      "Compressing large CSV files.",
-      "Encrypting data at rest.",
-      "Scheduling tasks for CDC."
-    ],
-    "correct_index": 0,
-    "explanation": "Metadata cache allows Snowflake to quickly access table and partition information for pruning.",
-    "topic": "performance",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["performance", "metadata"]
-  },
-  {
-    "id": "FCT-0037",
-    "question": "Where is local warehouse cache kept in Snowflake?",
-    "options": [
-      "On SSD storage local to the warehouse compute.",
-      "In the database schema.",
-      "In a user-defined stage.",
-      "In the Access History tables."
-    ],
-    "correct_index": 0,
-    "explanation": "Local cache for a warehouse resides on SSD-backed storage associated with that warehouse’s compute.",
-    "topic": "performance",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["performance", "cache"]
-  },
-  {
-    "id": "FCT-0038",
-    "question": "What is the primary purpose of clustering keys in Snowflake?",
-    "options": [
-      "To improve pruning and performance on large tables for certain query patterns.",
-      "To enforce primary key constraints.",
-      "To physically shard data by user.",
-      "To enable multi-tenant billing."
-    ],
-    "correct_index": 0,
-    "explanation": "Clustering keys influence how micro-partitions are organized, which can improve pruning.",
-    "topic": "performance",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["performance", "clustering"]
-  },
-  {
-    "id": "FCT-0039",
-    "question": "Which Snowflake feature is designed to speed up highly selective point-lookups and filters?",
-    "options": [
-      "Search Optimization.",
-      "Snowpipe.",
-      "Fail-safe.",
-      "Network policies."
-    ],
-    "correct_index": 0,
-    "explanation": "Search Optimization provides additional data structures that accelerate highly selective queries.",
-    "topic": "performance",
-    "difficulty": "hard",
-    "source_type": "mock",
-    "tags": ["performance", "search_optimization"]
-  },
-  {
-    "id": "FCT-0040",
-    "question": "Which Snowflake object is specifically used to capture change data (CDC) on a table?",
-    "options": ["Stream.", "Task.", "Sequence.", "File format."],
-    "correct_index": 0,
-    "explanation": "Streams are Snowflake’s mechanism for tracking changes (inserts, updates, deletes) on a table or view.",
-    "topic": "cdc",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["cdc", "streams"]
-  },
-  {
-    "id": "FCT-0041",
-    "question": "What do Streams in Snowflake primarily store?",
-    "options": [
-      "Change metadata about inserted, updated, and deleted rows.",
-      "Full copies of changed rows without metadata.",
-      "Only table structure changes.",
-      "Warehouse configuration history."
-    ],
-    "correct_index": 0,
-    "explanation": "Streams store metadata that describes data changes, not full copies of the data.",
-    "topic": "cdc",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["cdc", "streams"]
-  },
-  {
-    "id": "FCT-0042",
-    "question": "What happens to a stream’s offset when you consume changes from it?",
-    "options": [
-      "The stream automatically advances its offset.",
-      "You must manually reset the offset each time.",
-      "The offset never changes.",
-      "The offset is advanced only by ACCOUNTADMIN."
-    ],
-    "correct_index": 0,
-    "explanation": "When changes are consumed from a stream, the offset automatically moves forward.",
-    "topic": "cdc",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["cdc", "streams"]
-  },
-  {
-    "id": "FCT-0043",
-    "question": "Which Snowflake feature allows scheduling SQL statements to run at defined intervals?",
-    "options": ["Tasks.", "Streams.", "Stages.", "File formats."],
-    "correct_index": 0,
-    "explanation": "Tasks let you schedule and automate SQL execution, often combined with streams.",
-    "topic": "automation",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["automation", "tasks"]
-  },
-  {
-    "id": "FCT-0044",
-    "question": "Which statement about Snowflake serverless tasks is TRUE?",
-    "options": [
-      "They use cloud services credits instead of warehouse credits.",
-      "They always require a running warehouse.",
-      "They only run once and cannot be scheduled.",
-      "They can only be used with external tables."
-    ],
-    "correct_index": 0,
-    "explanation": "Serverless tasks run using Snowflake-managed compute billed as cloud services, not your warehouses.",
-    "topic": "automation",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["automation", "tasks", "billing"]
-  },
-  {
-    "id": "FCT-0045",
-    "question": "Which Snowflake command is used to bulk load data from a stage into a table?",
-    "options": [
-      "COPY INTO &lt;table&gt;",
-      "INSERT STAGED DATA",
-      "LOAD DATA INFILE",
-      "CREATE TABLE AS STAGE"
-    ],
-    "correct_index": 0,
-    "explanation": "COPY INTO &lt;table&gt; is used for bulk loading from an internal or external stage.",
-    "topic": "data_loading",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["data_loading", "copy_into"]
-  },
-  {
-    "id": "FCT-0046",
-    "question": "Which statement about Snowpipe is TRUE?",
-    "options": [
-      "It provides continuous data loading using a pipe object.",
-      "It can only be used for manual one-time loads.",
-      "It requires a warehouse to be constantly running.",
-      "It is only available in on-prem deployments."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowpipe offers near-real-time loading using pipes and external event notifications or file listings.",
-    "topic": "data_loading",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["data_loading", "snowpipe"]
-  },
-  {
-    "id": "FCT-0047",
-    "question": "How is Snowpipe billed in Snowflake?",
-    "options": [
-      "Using cloud services credits for Snowflake-managed compute.",
-      "Using the same warehouse credits as user queries.",
-      "Only via storage cost, not compute.",
-      "It is free and not billed."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowpipe uses Snowflake-managed compute, which is billed as cloud services.",
-    "topic": "billing",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["billing", "snowpipe"]
-  },
-  {
-    "id": "FCT-0048",
-    "question": "Which description best fits Snowflake external tables?",
-    "options": [
-      "They reference data stored in external cloud storage.",
-      "They physically store data inside the virtual warehouse.",
-      "They are used only for transient data.",
-      "They are required for Time Travel."
-    ],
-    "correct_index": 0,
-    "explanation": "External tables let you query data that remains stored outside Snowflake (e.g., in cloud object storage).",
-    "topic": "sql_objects",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["sql_objects", "external_tables"]
-  },
-  {
-    "id": "FCT-0049",
-    "question": "Which statement about Snowflake materialized views is TRUE?",
-    "options": [
-      "They store query results physically and must be refreshed.",
-      "They never consume storage.",
-      "They are always virtual and computed on the fly.",
-      "They cannot improve performance."
-    ],
-    "correct_index": 0,
-    "explanation": "Materialized views persist their results, which use storage and require compute to refresh.",
-    "topic": "sql_objects",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["sql_objects", "materialized_views"]
-  },
-  {
-    "id": "FCT-0050",
-    "question": "Which statement about secure views in Snowflake is TRUE?",
-    "options": [
-      "They hide the underlying query definition from consumers.",
-      "They expose the full query definition to all users.",
-      "They are only available for external tables.",
-      "They are used only for Time Travel."
-    ],
-    "correct_index": 0,
-    "explanation": "Secure views are designed to protect the definition and underlying logic while still providing data access.",
-    "topic": "sql_objects",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["sql_objects", "secure_views"]
-  },
-  {
-    "id": "FCT-0051",
-    "question": "Which of the following BEST describes Snowflake’s overall architecture?",
-    "options": [
-      "It separates storage, compute, and cloud services into distinct layers.",
-      "It combines storage and compute in a single monolithic layer.",
-      "It runs only on-premises data centers.",
-      "It requires users to manage their own file systems for tables."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake’s architecture cleanly separates storage, compute, and cloud services.",
-    "topic": "architecture",
-    "difficulty": "easy",
-    "source_type": "mock",
-    "tags": ["architecture", "layers"]
-  },
-  {
-    "id": "FCT-0052",
-    "question": "How is storage organized with respect to warehouses in Snowflake?",
-    "options": [
-      "Storage is centralized and shared across all warehouses.",
-      "Each warehouse has its own separate storage.",
-      "Storage is attached only to the largest warehouse.",
-      "Storage is not used when warehouses are suspended."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake uses a centralized storage layer accessed by any warehouse in the account.",
-    "topic": "architecture",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["architecture", "storage"]
-  },
-  {
-    "id": "FCT-0053",
-    "question": "Do Snowflake compute clusters share CPU and memory resources with each other?",
-    "options": [
-      "No, Snowflake compute clusters do not share CPU or memory.",
-      "Yes, all clusters share a single pool of memory.",
-      "Yes, but only within the same region.",
-      "Yes, but only during replication."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake compute clusters are isolated; they don’t share CPU or memory.",
-    "topic": "architecture",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["architecture", "compute"]
-  },
-  {
-    "id": "FCT-0054",
-    "question": "How is data encrypted in Snowflake?",
-    "options": [
-      "All data is encrypted at rest and in transit using a hierarchy of encryption keys.",
-      "Only data at rest is encrypted, not in transit.",
-      "Only data in transit is encrypted, not at rest.",
-      "Data is never encrypted by default."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake uses end-to-end encryption and a hierarchy of keys to protect data both at rest and in transit.",
-    "topic": "architecture",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["architecture", "encryption"]
-  },
-  {
-    "id": "FCT-0055",
-    "question": "Which edition of Snowflake introduces extended Time Travel retention beyond 1 day?",
-    "options": [
-      "Enterprise Edition and higher.",
-      "Standard Edition only.",
-      "Any edition, including trial.",
-      "Business Critical only, not Enterprise."
-    ],
-    "correct_index": 0,
-    "explanation": "Enterprise Edition and above allow you to configure extended Time Travel (up to 90 days).",
-    "topic": "editions",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["editions", "time_travel"]
-  },
-  {
-    "id": "FCT-0056",
-    "question": "Which Snowflake edition includes stricter security controls and advanced encryption features?",
-    "options": [
-      "Business Critical Edition.",
-      "Standard Edition.",
-      "Reader Edition.",
-      "Developer Edition."
-    ],
-    "correct_index": 0,
-    "explanation": "Business Critical provides stronger security guarantees suitable for highly regulated workloads.",
-    "topic": "editions",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["editions", "security"]
-  },
-  {
-    "id": "FCT-0057",
-    "question": "Which of the following best describes a Reader account in Snowflake?",
-    "options": [
-      "An account where compute cost is borne by the provider instead of the consumer.",
-      "An account that cannot run any queries.",
-      "An account used only for replication.",
-      "An account type available only on-premises."
-    ],
-    "correct_index": 0,
-    "explanation": "Reader accounts allow providers to pay for consumers’ compute, simplifying onboarding.",
-    "topic": "billing",
-    "difficulty": "hard",
-    "source_type": "mock",
-    "tags": ["billing", "reader_accounts"]
-  },
-  {
-    "id": "FCT-0058",
-    "question": "Which statement about transient databases or schemas in Snowflake is TRUE?",
-    "options": [
-      "They do not use Fail-safe for data retention.",
-      "They are required for all production workloads.",
-      "They automatically encrypt data twice.",
-      "They disable Time Travel completely."
-    ],
-    "correct_index": 0,
-    "explanation": "Transient objects avoid Fail-safe to lower storage cost for non-critical data.",
-    "topic": "storage",
-    "difficulty": "hard",
-    "source_type": "mock",
-    "tags": ["storage", "transient"]
-  },
-  {
-    "id": "FCT-0059",
-    "question": "Which statement about Access History is TRUE?",
-    "options": [
-      "It records data access activity for governance and auditing.",
-      "It stores micro-partition compression statistics only.",
-      "It is a cache of query results.",
-      "It stores file format definitions."
-    ],
-    "correct_index": 0,
-    "explanation": "Access History is a governance feature that logs how data is accessed.",
-    "topic": "governance",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["governance", "access_history"]
-  },
-  {
-    "id": "FCT-0060",
-    "question": "True or false: In Snowflake, privileges are granted directly to users by default.",
-    "options": [
-      "False. Privileges are granted to roles, and roles are granted to users.",
-      "True. Users always receive privileges directly.",
-      "True. Roles are only advisory.",
-      "False. Privileges are inferred from queries only."
-    ],
-    "correct_index": 0,
-    "explanation": "Snowflake follows RBAC: roles hold privileges, and users are assigned roles.",
-    "topic": "security",
-    "difficulty": "medium",
-    "source_type": "mock",
-    "tags": ["security", "rbac"]
-  }
-]
+{
+  "access_control": [
+    {
+      "id": "SPC-001",
+      "question": "Which role has the highest level of privileges within a Snowflake account?",
+      "options": ["ACCOUNTADMIN", "SECURITYADMIN", "SYSADMIN", "USERADMIN"],
+      "correct_index": 0,
+      "explanation": "ACCOUNTADMIN is the top-level administrative role.",
+      "topic": "access_control",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["access_control", "user_management"]
+    },
+    {
+      "id": "SPC-002",
+      "question": "What is required to grant a privilege on a table to a role?",
+      "options": [
+        "Use ALTER ROLE",
+        "Use SET PRIVILEGE",
+        "Use GRANT <privilege> ON TABLE",
+        "Use GRANT USER TO TABLE"
+      ],
+      "correct_index": 2,
+      "explanation": "Privileges are granted using GRANT statements on objects.",
+      "topic": "access_control",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["access_control", "user_management"]
+    }
+  ],
+  "architecture": [
+    {
+      "id": "SPC-009",
+      "question": "Which of the following are Snowgrid capabilities?",
+      "options": [
+        "Single\u2011cloud workload isolation.",
+        "Local disk caching inside a warehouse.",
+        "Client\u2011side encryption only.",
+        "Cross\u2011cloud/region replication and secure collaboration across clouds."
+      ],
+      "correct_index": 3,
+      "explanation": "Snowgrid is Snowflake\u2019s cross\u2011cloud, cross\u2011region technology layer.",
+      "topic": "architecture",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["architecture"]
+    },
+    {
+      "id": "SPC-010",
+      "question": "Snowflake is available in four editions. Which are they?",
+      "options": [
+        "Standard, Enterprise, Business Critical, and Virtual Private Snowflake (VPS).",
+        "Free, Pro, Business, and VPS.",
+        "Standard, Enterprise, Developer, and Government.",
+        "Enterprise, Business Critical, VPS, and Local."
+      ],
+      "correct_index": 0,
+      "explanation": "These are the four commercial editions listed by Snowflake.",
+      "topic": "architecture",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["architecture"]
+    }
+  ],
+  "clustering": [
+    {
+      "id": "SPC-014",
+      "question": "Max recommended number of clustering key columns?",
+      "options": ["5\u20138", "Exactly 4", "Unlimited", "1\u20133"],
+      "correct_index": 3,
+      "explanation": "Clustering keys should be narrow.",
+      "topic": "clustering",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["clustering"]
+    },
+    {
+      "id": "SPC-015",
+      "question": "What is the primary purpose of clustering in Snowflake?",
+      "options": [
+        "Improve query performance on large tables with predictable filter patterns",
+        "Improve stage scanning",
+        "Increase compute power automatically",
+        "Reduce storage cost"
+      ],
+      "correct_index": 0,
+      "explanation": "Clustering helps Snowflake prune micro-partitions for faster selective queries.",
+      "topic": "clustering",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["clustering"]
+    }
+  ],
+  "connecting_to_snowflake": [
+    {
+      "id": "SPC-025",
+      "question": "What authentication methods does Snowflake support for client connections?",
+      "options": [
+        "Kerberos only",
+        "Username/password only",
+        "Password + MFA only",
+        "Key-pair authentication, OAuth, SSO/SAML, and username/password"
+      ],
+      "correct_index": 3,
+      "explanation": "Snowflake supports several auth mechanisms including key\u2011pair, OAuth, SAML/SSO, and passwords.",
+      "topic": "connecting_to_snowflake",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["connecting"]
+    },
+    {
+      "id": "SPC-026",
+      "question": "What is required when connecting via key-pair authentication?",
+      "options": [
+        "Only a public key is required",
+        "A warehouse must be running",
+        "A private key stored locally and the public key registered in Snowflake",
+        "Keys must be rotated manually each day"
+      ],
+      "correct_index": 2,
+      "explanation": "Key\u2011pair auth uses asymmetric keys; Snowflake stores the public key.",
+      "topic": "connecting_to_snowflake",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["connecting"]
+    }
+  ],
+  "cost_management": [
+    {
+      "id": "SPC-034",
+      "question": "How can ACCOUNTADMIN view automatic clustering billing?",
+      "options": [
+        "Query AUTOMATIC_CLUSTERING_HISTORY in ACCOUNT_USAGE.",
+        "Query QUERY_HISTORY;",
+        "Use LIST STAGES;",
+        "SHOW BILLING;"
+      ],
+      "correct_index": 0,
+      "explanation": "ACCOUNT_USAGE has clustering cost details.",
+      "topic": "cost_management",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["billing"]
+    },
+    {
+      "id": "SPC-035",
+      "question": "What determines credit consumption for a warehouse?",
+      "options": [
+        "Cloud region",
+        "Amount of data scanned",
+        "Network latency",
+        "Warehouse size and runtime"
+      ],
+      "correct_index": 3,
+      "explanation": "Credits are billed based on warehouse size (XS\u20136XL) and how long it runs.",
+      "topic": "cost_management",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["cost", "management"]
+    }
+  ],
+  "data_loading": [
+    {
+      "id": "SPC-047",
+      "question": "Which COPY INTO options allow data transformation?",
+      "options": [
+        "COPY does not allow transformations.",
+        "Only FILE_FORMAT supports transformation.",
+        "Using COPY INTO <table> FROM (SELECT ... FROM @stage);",
+        "Only Snowpipe can transform data."
+      ],
+      "correct_index": 2,
+      "explanation": "Transformations use COPY INTO with a SELECT wrapper.",
+      "topic": "data_loading",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["copy"]
+    },
+    {
+      "id": "SPC-048",
+      "question": "How to unload data into a single file?",
+      "options": [
+        "Set MAX_FILES=0;",
+        "Use UNLOAD SINGLE FILE;",
+        "Use COPY INTO @stage FILES=1 SINGLE=TRUE;",
+        "Use RESULT_SCAN;"
+      ],
+      "correct_index": 2,
+      "explanation": "SINGLE=TRUE forces one output file.",
+      "topic": "data_loading",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["copy"]
+    }
+  ],
+  "data_protection": [
+    {
+      "id": "SPC-067",
+      "question": "Which Snowflake feature allows accessing historical data that has been changed or deleted?",
+      "options": [
+        "Clustering",
+        "Materialized Views",
+        "Fail-safe",
+        "Time Travel"
+      ],
+      "correct_index": 3,
+      "explanation": "Time Travel enables querying historical state within a defined retention period.",
+      "topic": "data_protection",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["data_protection"]
+    },
+    {
+      "id": "SPC-068",
+      "question": "What is the purpose of Fail-safe?",
+      "options": [
+        "To provide a final recovery period for catastrophic failures",
+        "To reduce storage cost",
+        "To purge old micro-partitions",
+        "To extend Time Travel indefinitely"
+      ],
+      "correct_index": 0,
+      "explanation": "Fail-safe provides 7 days of recovery after Time Travel expires.",
+      "topic": "data_protection",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["data_protection"]
+    }
+  ],
+  "data_sharing": [
+    {
+      "id": "SPC-075",
+      "question": "Which privileges are provided with a share by the data provider?",
+      "options": [
+        "INSERT/UPDATE on shared tables.",
+        "OWNERSHIP on the database.",
+        "OPERATE on warehouses.",
+        "USAGE on the database/schema and SELECT on shared objects."
+      ],
+      "correct_index": 3,
+      "explanation": "Shares grant read\u2011only access: USAGE + SELECT.",
+      "topic": "data_sharing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["data_sharing"]
+    },
+    {
+      "id": "SPC-076",
+      "question": "Which database objects can be shared using Secure Data Sharing?",
+      "options": [
+        "Network policies.",
+        "Warehouses and tasks.",
+        "Tables, dynamic/external tables, and secure views/materialized views.",
+        "Stored procedures and non\u2011secure views."
+      ],
+      "correct_index": 2,
+      "explanation": "Shares support read\u2011only database objects including secure views.",
+      "topic": "data_sharing",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["data_sharing"]
+    }
+  ],
+  "functions_procedures_scripting": [
+    {
+      "id": "SPC-089",
+      "question": "Which language can be used to write Snowflake stored procedures?",
+      "options": [
+        "JavaScript or SQL (Snowflake Scripting)",
+        "Go",
+        "Scala",
+        "Python"
+      ],
+      "correct_index": 0,
+      "explanation": "Stored procedures support JavaScript and SQL via Snowflake Scripting.",
+      "topic": "functions_procedures_scripting",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["functions", "procedures", "scripting"]
+    },
+    {
+      "id": "SPC-090",
+      "question": "What does RETURN in Snowflake Scripting do?",
+      "options": [
+        "Stops the warehouse",
+        "Commits a transaction automatically",
+        "Returns a value from a stored procedure or block",
+        "Creates a temporary table"
+      ],
+      "correct_index": 2,
+      "explanation": "RETURN exits the procedure or block and outputs a value.",
+      "topic": "functions_procedures_scripting",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["functions", "procedures", "scripting"]
+    }
+  ],
+  "governance": [
+    {
+      "id": "SPC-097",
+      "question": "Which schema is used to view storage, compute, and object usage metrics for a Snowflake account?",
+      "options": [
+        "INFORMATION_SCHEMA",
+        "PUBLIC",
+        "SNOWFLAKE.ACCOUNT_USAGE",
+        "SNOWFLAKE.DATA_USAGE"
+      ],
+      "correct_index": 2,
+      "explanation": "ACCOUNT_USAGE in the SNOWFLAKE database provides historical usage views.",
+      "topic": "governance",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["governance"]
+    },
+    {
+      "id": "SPC-098",
+      "question": "Snowsight Query History page shows queries executed in the last 31 days. (True/False)",
+      "options": [
+        "Only when result cache is enabled.",
+        "TRUE",
+        "Only for ACCOUNTADMIN users.",
+        "FALSE"
+      ],
+      "correct_index": 3,
+      "explanation": "The Snowsight Query History page shows ~14 days; ACCOUNT_USAGE holds 1 year.",
+      "topic": "governance",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["governance"]
+    }
+  ],
+  "overview_architecture": [
+    {
+      "id": "SPC-109",
+      "question": "What best describes Snowflake\u2019s overall architecture?",
+      "options": [
+        "Hybrid row-column engine",
+        "Multi-cluster shared data architecture",
+        "Shared-nothing architecture",
+        "Shared-disk architecture"
+      ],
+      "correct_index": 1,
+      "explanation": "Snowflake separates compute from storage using a multi\u2011cluster shared\u2011data model.",
+      "topic": "overview_architecture",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["overview", "architecture"]
+    },
+    {
+      "id": "SPC-110",
+      "question": "What component handles authentication, optimization, and metadata management?",
+      "options": [
+        "Client layer",
+        "Cloud Services layer",
+        "Virtual Warehouse layer",
+        "Storage layer"
+      ],
+      "correct_index": 1,
+      "explanation": "Cloud Services is the control plane managing security, metadata, and optimization.",
+      "topic": "overview_architecture",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["overview", "architecture"]
+    }
+  ],
+  "performance": [
+    {
+      "id": "SPC-117",
+      "question": "The major benefits of defining clustering keys are:",
+      "options": [
+        "Eliminating Time Travel storage.",
+        "Improved micro\u2011partition pruning for common filter patterns.",
+        "Automatic primary key indexing.",
+        "Enforced uniqueness constraints."
+      ],
+      "correct_index": 1,
+      "explanation": "Clustering can reduce scanned data for predicates aligned to the key.",
+      "topic": "performance",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["performance"]
+    },
+    {
+      "id": "SPC-118",
+      "question": "Does Snowflake automatically and transparently maintain materialized views? (True/False)",
+      "options": [
+        "FALSE",
+        "Only in Standard Edition.",
+        "Only if you run REFRESH MATERIALIZED VIEW.",
+        "TRUE"
+      ],
+      "correct_index": 3,
+      "explanation": "Snowflake maintains materialized views automatically as base data changes.",
+      "topic": "performance",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["performance"]
+    }
+  ],
+  "query_performance": [
+    {
+      "id": "SPC-124",
+      "question": "What does high 'bytes spilled to remote storage' in a query profile indicate?",
+      "options": [
+        "Too many micro-partitions scanned",
+        "Excessive clustering keys",
+        "Insufficient warehouse memory for the workload",
+        "Missing result cache"
+      ],
+      "correct_index": 2,
+      "explanation": "Spilling occurs when memory is insufficient, slowing execution.",
+      "topic": "query_performance",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["query_performance"]
+    },
+    {
+      "id": "SPC-125",
+      "question": "What is a recommended solution when a warehouse shows heavy queuing?",
+      "options": [
+        "Reduce Time Travel retention",
+        "Increase warehouse size or enable multi\u2011cluster",
+        "Disable auto-suspend",
+        "Suspend the warehouse"
+      ],
+      "correct_index": 1,
+      "explanation": "Queuing indicates concurrency pressure; scaling compute helps.",
+      "topic": "query_performance",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["query_performance"]
+    }
+  ],
+  "replication": [
+    {
+      "id": "SPC-133",
+      "question": "Which objects/features are not available for replication in the Standard Edition of Snowflake?",
+      "options": [
+        "Secure data sharing objects.",
+        "Dynamic tables.",
+        "Account object replication via failover groups (e.g., users/roles/warehouses).",
+        "Database replication across regions."
+      ],
+      "correct_index": 2,
+      "explanation": "Failover groups and account-object replication require Enterprise or higher.",
+      "topic": "replication",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["replication"]
+    },
+    {
+      "id": "SPC-134",
+      "question": "Which view shows replication history?",
+      "options": [
+        "OBJECT_REPL_HISTORY",
+        "ACCOUNT_HISTORY",
+        "FAILSAFE_HISTORY",
+        "REPLICATION_DATABASE_HISTORY"
+      ],
+      "correct_index": 3,
+      "explanation": "ACCOUNT_USAGE provides replication history.",
+      "topic": "replication",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["replication"]
+    }
+  ],
+  "security": [
+    {
+      "id": "SPC-135",
+      "question": "Which SQL command helps determine whether a network policy is set at the account or user level?",
+      "options": [
+        "DESCRIBE NETWORK POLICY <name>;",
+        "SHOW NETWORK POLICIES;",
+        "SHOW GRANTS ON ACCOUNT;",
+        "SHOW PARAMETERS LIKE 'NETWORK_POLICY' IN ACCOUNT / IN USER <username>;"
+      ],
+      "correct_index": 3,
+      "explanation": "Network policy assignment is visible via SHOW PARAMETERS on ACCOUNT or USER.",
+      "topic": "security",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["security"]
+    },
+    {
+      "id": "SPC-136",
+      "question": "A user\u2019s default role is assigned when the user:",
+      "options": [
+        "Runs their first query.",
+        "Is granted the PUBLIC role.",
+        "Logs in / starts a session in Snowflake.",
+        "Creates their first warehouse."
+      ],
+      "correct_index": 2,
+      "explanation": "The DEFAULT_ROLE property determines the initial role at login.",
+      "topic": "security",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["security"]
+    }
+  ],
+  "semi_structured_data": [
+    {
+      "id": "SPC-157",
+      "question": "John is loading huge JSON arrays. What should he do?",
+      "options": [
+        "Disable compression.",
+        "Convert JSON to CSV.",
+        "Split large arrays into multiple smaller JSON objects.",
+        "Increase VARIANT limit to 64 MB."
+      ],
+      "correct_index": 2,
+      "explanation": "VARIANT max ~16MB, so splitting is required.",
+      "topic": "semi_structured_data",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["semi_structured"]
+    },
+    {
+      "id": "SPC-158",
+      "question": "What data type does Snowflake use to store semi-structured data formats like JSON?",
+      "options": ["ARRAY", "TEXT", "OBJECT", "VARIANT"],
+      "correct_index": 3,
+      "explanation": "VARIANT can store JSON, Avro, ORC, Parquet, and XML efficiently.",
+      "topic": "semi_structured_data",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["semi_structured"]
+    }
+  ],
+  "snowflake_ai_ml": [
+    {
+      "id": "SPC-167",
+      "question": "What is the purpose of Snowflake Cortex?",
+      "options": [
+        "To provide built\u2011in AI and ML inference capabilities inside Snowflake",
+        "To replace external ML services",
+        "To manage virtual warehouse scaling",
+        "To process unstructured data only"
+      ],
+      "correct_index": 0,
+      "explanation": "Cortex enables in\u2011platform LLM inference, embeddings, and model execution.",
+      "topic": "snowflake_ai_ml",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["ai", "ml"]
+    },
+    {
+      "id": "SPC-168",
+      "question": "What does Snowflake\u2019s Feature Store help with?",
+      "options": [
+        "Scaling compute for training",
+        "Centralized management and reuse of ML features",
+        "Managing network policies",
+        "Encrypting data automatically"
+      ],
+      "correct_index": 1,
+      "explanation": "Feature Store ensures consistency, reuse, and governance of ML features.",
+      "topic": "snowflake_ai_ml",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["ai", "ml"]
+    }
+  ],
+  "snowpipe": [
+    {
+      "id": "SPC-175",
+      "question": "Which command lists pipes you have privilege on?",
+      "options": [
+        "LIST @pipes;",
+        "SHOW STREAMS;",
+        "DESCRIBE PIPE;",
+        "SHOW PIPES;"
+      ],
+      "correct_index": 3,
+      "explanation": "SHOW PIPES displays accessible pipes.",
+      "topic": "snowpipe",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["snowpipe"]
+    }
+  ],
+  "sql": [
+    {
+      "id": "SPC-176",
+      "question": "Nils wants to delete all data from table t1 but keep the table structure. Which command should he use?",
+      "options": [
+        "REMOVE TABLE t1;",
+        "DROP TABLE t1;",
+        "TRUNCATE TABLE t1;",
+        "DELETE FROM t1;"
+      ],
+      "correct_index": 2,
+      "explanation": "TRUNCATE removes all rows while preserving the table definition.",
+      "topic": "sql",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["sql"]
+    },
+    {
+      "id": "SPC-177",
+      "question": "Which of these is NOT a DML command?",
+      "options": ["CREATE TABLE", "INSERT", "UPDATE", "MERGE"],
+      "correct_index": 0,
+      "explanation": "CREATE is DDL; INSERT/UPDATE/MERGE are DML.",
+      "topic": "sql",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["sql"]
+    }
+  ],
+  "sql_support": [
+    {
+      "id": "SPC-187",
+      "question": "Which SQL construct does Snowflake use to handle semi-structured data such as JSON?",
+      "options": [
+        "ARRAY only",
+        "VARIANT data type",
+        "HSTORE data type",
+        "BLOB data type"
+      ],
+      "correct_index": 1,
+      "explanation": "Snowflake uses VARIANT to store semi-structured formats like JSON, Avro, Parquet.",
+      "topic": "sql_support",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["sql"]
+    },
+    {
+      "id": "SPC-188",
+      "question": "What is the purpose of the FLATTEN table function?",
+      "options": [
+        "To optimize clustering",
+        "To remove null fields",
+        "To expand semi\u2011structured arrays or objects into rows",
+        "To compress VARIANT columns"
+      ],
+      "correct_index": 2,
+      "explanation": "FLATTEN turns nested arrays/objects inside VARIANT into tabular row sets.",
+      "topic": "sql_support",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["sql"]
+    }
+  ],
+  "statistics": [
+    {
+      "id": "SPC-199",
+      "question": "Which algorithm estimates distinct values?",
+      "options": ["Bloom filter", "MinHash", "HyperLogLog", "K\u2011Means"],
+      "correct_index": 2,
+      "explanation": "Snowflake uses HyperLogLog for NDV estimates.",
+      "topic": "statistics",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["statistics"]
+    }
+  ],
+  "storage": [
+    {
+      "id": "SPC-200",
+      "question": "Can Time Travel be disabled for an account by ACCOUNTADMIN?",
+      "options": [
+        "No, Time Travel is always on.",
+        "Yes, by setting DATA_RETENTION_TIME_IN_DAYS = 0 at the account level.",
+        "Only transient tables can disable it.",
+        "Only Enterprise Edition accounts can disable it."
+      ],
+      "correct_index": 1,
+      "explanation": "ACCOUNTADMIN can set default retention to 0, effectively disabling Time Travel for new objects.",
+      "topic": "storage",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["storage"]
+    },
+    {
+      "id": "SPC-201",
+      "question": "Which function helps generate a File URL for an unstructured data file on a stage?",
+      "options": [
+        "GET_PRESIGNED_URL",
+        "SYSTEM$FILE_URL",
+        "GET_STAGE_LOCATION",
+        "BUILD_STAGE_FILE_URL"
+      ],
+      "correct_index": 3,
+      "explanation": "BUILD_STAGE_FILE_URL creates a non\u2011expiring File URL for a staged file.",
+      "topic": "storage",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["storage"]
+    }
+  ],
+  "tasks_streams_dynamic_tables": [
+    {
+      "id": "SPC-205",
+      "question": "Victor\u2019s 5\u2011minute task didn't run for 30 minutes. Why?",
+      "options": [
+        "Warehouse was suspended (for user-managed tasks).",
+        "SQL had errors.",
+        "Task must be recreated every hour.",
+        "Task history expired."
+      ],
+      "correct_index": 0,
+      "explanation": "User-managed tasks need running warehouses.",
+      "topic": "tasks_streams_dynamic_tables",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["tasks"]
+    },
+    {
+      "id": "SPC-206",
+      "question": "When choose user\u2011managed tasks?",
+      "options": [
+        "For auto-suspend needs.",
+        "Tasks never need warehouses.",
+        "When predictable compute or long\u2011running tasks are required.",
+        "For external tables only."
+      ],
+      "correct_index": 2,
+      "explanation": "User-managed tasks give compute control.",
+      "topic": "tasks_streams_dynamic_tables",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["tasks"]
+    }
+  ],
+  "time_travel": [
+    {
+      "id": "SPC-216",
+      "question": "Which feature provides access to historical data?",
+      "options": [
+        "Search Optimization",
+        "Materialized Views",
+        "Fail-safe",
+        "Time Travel"
+      ],
+      "correct_index": 3,
+      "explanation": "Time Travel supports point\u2011in\u2011time restore.",
+      "topic": "time_travel",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["timetravel"]
+    },
+    {
+      "id": "SPC-217",
+      "question": "What happens when retention ends?",
+      "options": [
+        "Data moves to cold storage.",
+        "Tables are dropped.",
+        "Data remains for 7 days.",
+        "Historical data becomes unavailable."
+      ],
+      "correct_index": 3,
+      "explanation": "Expired Time Travel data is removed before Fail-safe.",
+      "topic": "time_travel",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["timetravel"]
+    }
+  ],
+  "virtual_warehouse_scaling": [
+    {
+      "id": "SPC-218",
+      "question": "What is a key benefit of multi\u2011cluster warehouse scaling?",
+      "options": [
+        "Eliminates credit consumption",
+        "Reduces storage cost",
+        "Improves single\u2011query runtime",
+        "Improves concurrency during workload spikes"
+      ],
+      "correct_index": 3,
+      "explanation": "Multi\u2011cluster scaling adds clusters to handle high concurrency.",
+      "topic": "virtual_warehouse_scaling",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["warehouse_scaling"]
+    },
+    {
+      "id": "SPC-219",
+      "question": "What happens when a multi\u2011cluster warehouse scales out?",
+      "options": [
+        "Time Travel retention increases",
+        "Warehouse size doubles automatically",
+        "Snowflake adds additional clusters to handle more concurrent queries",
+        "Queries are cancelled"
+      ],
+      "correct_index": 2,
+      "explanation": "Scaling out increases clusters, not node size.",
+      "topic": "virtual_warehouse_scaling",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["warehouse_scaling"]
+    }
+  ],
+  "warehouses": [
+    {
+      "id": "SPC-226",
+      "question": "The suspended warehouse cannot be resized until it resumes. (True/False)",
+      "options": [
+        "TRUE",
+        "FALSE",
+        "Only in Standard Edition.",
+        "Only for multi\u2011cluster warehouses."
+      ],
+      "correct_index": 1,
+      "explanation": "You can alter size while suspended; it takes effect on resume.",
+      "topic": "warehouses",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["warehouses"]
+    },
+    {
+      "id": "SPC-227",
+      "question": "What are the two modes for multi\u2011cluster warehouses?",
+      "options": [
+        "Maximized and Auto\u2011scale.",
+        "Standard and Economy.",
+        "Single\u2011cluster and Multi\u2011cluster.",
+        "Elastic and Fixed."
+      ],
+      "correct_index": 0,
+      "explanation": "MIN=MAX => Maximized; MIN<MAX => Auto\u2011scale.",
+      "topic": "warehouses",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["warehouses"]
+    }
+  ]
+}
