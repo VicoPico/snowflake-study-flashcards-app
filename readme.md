@@ -1,5 +1,7 @@
 # ❄️ SnowPro Core Quiz App
 
+**Live Application:** https://vicopico.github.io/snowflake-study-flashcards-app/
+
 A minimal web-based quiz application for studying the **SnowPro Core Certification**.
 Built using HTML, Bootstrap, and Vanilla JavaScript, with questions loaded from either a public Google Sheets CSV or a local questions.json file.
 
@@ -9,9 +11,7 @@ The application supports question topics, randomized answers, explanations, and 
 
 ## Features
 
-- Load questions by topic from
-  - A published Google Sheets CSV URL
-  - or local questions.json file (fallback)
+- Load questions by topic from a published Google Sheets CSV URL or local questions.json file (fallback)
 - Topic-based filtering
 - Shuffle questions automatically
 - Explanations for each answer
@@ -53,7 +53,7 @@ You can also host it on:
 ## License
 
 This project is licensed under the **MIT License**.  
-See the `LICENSE` file for details.
+See [LICENSE](LICENSE) file for details.
 
 ---
 
