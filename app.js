@@ -26,6 +26,77 @@ function clearWarning() {
 }
 
 // =============================
+// Timer config/state
+// =============================
+const TIME_LIMIT = 40; // seconds per question
+let timeLeft = TIME_LIMIT;
+let timerInterval = null;
+
+// Timer DOM elements (optional; app works without them)
+const timerText = document.getElementById("timerText");
+const timerBar = document.getElementById("timerBar");
+
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+}
+
+function renderTimer() {
+  if (timerText) {
+    timerText.textContent = `Time left: ${timeLeft}s`;
+  }
+  if (timerBar) {
+    const pct = Math.max(0, (timeLeft / TIME_LIMIT) * 100);
+    timerBar.style.width = `${pct}%`;
+
+    // Optional color urgency
+    timerBar.classList.toggle("bg-danger", timeLeft <= 10);
+    timerBar.classList.toggle("bg-warning", timeLeft > 10 && timeLeft <= 20);
+    timerBar.classList.toggle("bg-primary", timeLeft > 20);
+  }
+}
+
+function startTimer(onTimeout) {
+  stopTimer(); // prevent stacking
+  timeLeft = TIME_LIMIT;
+  renderTimer();
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    renderTimer();
+
+    if (timeLeft <= 0) {
+      stopTimer();
+      onTimeout();
+    }
+  }, 1000);
+}
+
+function handleTimeout(question) {
+  const buttons = optionsContainer.querySelectorAll("button");
+  buttons.forEach((b) => (b.disabled = true));
+
+  const correctAnswer = question.options[question.correct_index];
+
+  // Highlight correct option
+  buttons.forEach((b, i) => {
+    if (i === question.correct_index) {
+      b.classList.replace("btn-outline-primary", "btn-success");
+    }
+  });
+
+  feedback.innerHTML = `
+    <div class="alert alert-warning">
+      <strong>Time’s up.</strong><br>
+      Correct answer: <strong>${correctAnswer}</strong><br>
+      ${question.explanation}
+    </div>
+  `;
+}
+
+// =============================
 // State
 // =============================
 let questionsByTopic = {};
@@ -185,12 +256,15 @@ function loadTopic(topic) {
 }
 
 function showQuestion() {
+  stopTimer(); // stop any previous timer
   feedback.innerHTML = "";
   optionsContainer.innerHTML = "";
 
   if (!currentQuestions.length) {
     questionTitle.textContent = "No questions available for this topic.";
     questionMeta.textContent = "";
+    timeLeft = TIME_LIMIT;
+    renderTimer();
     return;
   }
 
@@ -198,6 +272,8 @@ function showQuestion() {
     questionTitle.textContent =
       "You have completed all questions in this topic.";
     questionMeta.textContent = "";
+    timeLeft = TIME_LIMIT;
+    renderTimer();
     return;
   }
 
@@ -212,9 +288,14 @@ function showQuestion() {
     btn.onclick = () => handleAnswer(q, idx, btn);
     optionsContainer.appendChild(btn);
   });
+
+  // start timer for this question
+  startTimer(() => handleTimeout(q));
 }
 
 function handleAnswer(question, chosenIndex, clickedButton) {
+  stopTimer();
+
   const buttons = optionsContainer.querySelectorAll("button");
   buttons.forEach((b) => (b.disabled = true));
 
@@ -240,6 +321,8 @@ function handleAnswer(question, chosenIndex, clickedButton) {
 // UI Initialization
 // =============================
 function initUI() {
+  stopTimer();
+
   // Reset topic dropdown
   topicSelect.innerHTML = "";
 
@@ -262,6 +345,7 @@ function initUI() {
   };
 
   nextBtn.onclick = () => {
+    stopTimer();
     currentIndex++;
     showQuestion();
   };
@@ -277,6 +361,7 @@ function loadFromJson() {
   questionTitle.textContent = "Loading questions from local file...";
   optionsContainer.innerHTML = "";
   feedback.innerHTML = "";
+  stopTimer();
 
   fetch("questions.json")
     .then((res) => {
@@ -325,6 +410,7 @@ function loadFromGoogleSheets() {
   }
 
   console.info("Attempting to load questions from Google Sheets...");
+  stopTimer();
 
   fetch(CONFIG.googleSheetsCsvUrl)
     .then((res) => {
@@ -362,6 +448,8 @@ function loadFromGoogleSheets() {
 // Decide which loader to use
 function loadDataBySource(source) {
   clearWarning();
+  stopTimer();
+
   if (source === "local") {
     loadFromJson();
   } else {
@@ -374,6 +462,7 @@ function loadDataBySource(source) {
 // =============================
 (function init() {
   console.log("Google Sheets URL:", CONFIG.googleSheetsCsvUrl);
+
   const noRealUrl =
     !CONFIG.googleSheetsCsvUrl ||
     CONFIG.googleSheetsCsvUrl === "PASTE_YOUR_URL_TO_GOOGLE_SHEETS_HERE";
