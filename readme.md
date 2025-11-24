@@ -13,6 +13,7 @@ The application supports question topics, randomized answers, explanations, and 
 
 - Load questions by topic from a published Google Sheets CSV URL or local questions.json file (fallback)
 - Topic-based filtering
+- Timer: progress bar, timeout feedback, and integration with question flow
 - Shuffle questions automatically
 - Explanations for each answer
 - Display answer correctness + explanations
