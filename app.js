@@ -10,21 +10,39 @@ import { renderEmpty } from "./ui/render.js";
 function initDarkMode() {
   const btn = document.getElementById("darkModeToggle");
   const icon = document.getElementById("darkModeIcon");
+  const darkLink = document.getElementById("darkStyles");
   if (!btn) return;
 
   const saved = localStorage.getItem("snowpro-dark-mode");
-  const isDark = saved === "1";
+
+  let isDark;
+  if (saved === "1") {
+    isDark = true;
+  } else if (saved === "0") {
+    isDark = false;
+  } else {
+    isDark =
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
 
   const apply = (enabled) => {
     document.body.classList.toggle("dark-mode", enabled);
+    if (darkLink) {
+      darkLink.disabled = !enabled;
+    }
     localStorage.setItem("snowpro-dark-mode", enabled ? "1" : "0");
-    icon.className = enabled ? "bi bi-moon-fill" : "bi bi-sun-fill";
+    if (icon) {
+      icon.className = enabled ? "bi bi-moon-fill" : "bi bi-sun-fill";
+    }
   };
 
+  // Initial state
   apply(isDark);
 
   btn.addEventListener("click", () => {
-    apply(!document.body.classList.contains("dark-mode"));
+    const currentlyDark = document.body.classList.contains("dark-mode");
+    apply(!currentlyDark);
   });
 }
 
