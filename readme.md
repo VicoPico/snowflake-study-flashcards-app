@@ -28,6 +28,7 @@ The app supports topic-based practice, timed practice tests, explanations, scori
 - Works seamlessly on GitHub Pages, Netlify, Vercel, or any static host
 - Easy to extend with new topics or updated questions
 - Version badge automatically displayed in the UI
+- Optional Dark Mode (toggle in header, remembers your preference)
 
 ---
 
@@ -36,7 +37,9 @@ The app supports topic-based practice, timed practice tests, explanations, scori
 ```
 .
 ├── index.html
-├── app.js                 # Entry point (module)
+├── style.css              # Light mode base styles
+├── dark.css               # Dark mode override styles (loaded dynamically)
+├── app.js                 # App bootstrap (module)
 ├── config.js              # Settings (Google Sheets URL, time limit, version)
 ├── state.js               # Global quiz/test state
 ├── LICENSE
@@ -49,7 +52,7 @@ The app supports topic-based practice, timed practice tests, explanations, scori
 │   ├── dom.js             # Central DOM lookup
 │   ├── warnings.js        # Data source warnings
 │   ├── render.js          # Rendering helpers
-│   └── events.js          # UI event binding (topic select, mode select, etc.)
+│   └── events.js          # UI event binding (topic select, mode select, test start, etc.)
 └── quiz/
     ├── engine.js          # Question flow, scoring, topic/test logic
     └── timer.js           # Timer countdown + bar rendering
