@@ -1,0 +1,130 @@
+/* -----------------------------------
+   Light Mode (default)
+----------------------------------- */
+body {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+/* Version badge */
+.version-badge {
+  font-size: 0.55rem;
+  padding: 0.15rem 0.35rem;
+  opacity: 0.85;
+}
+
+/* -----------------------------------
+   DARK MODE (TWO-TONE PALETTE)
+   Background: rgb(50,50,50)
+   Surfaces:   rgb(33,33,33)
+----------------------------------- */
+
+body.dark-mode,
+body.dark-mode html {
+  background-color: rgb(50, 50, 50) !important;
+  color: #f1f1f1;
+}
+
+/* Make sure the main container blends with background */
+body.dark-mode .container {
+  background-color: transparent;
+}
+
+/* Card surfaces */
+body.dark-mode .card {
+  background-color: rgb(33, 33, 33) !important;
+  border-color: rgb(22, 22, 22);
+  color: #f1f1f1;
+}
+
+/* Card footer */
+body.dark-mode .card-footer {
+  background-color: rgb(28, 28, 28) !important;
+  border-top-color: rgb(22, 22, 22);
+}
+
+/* General text & labels */
+body.dark-mode label,
+body.dark-mode h1,
+body.dark-mode h5,
+body.dark-mode p,
+body.dark-mode small,
+body.dark-mode .form-label,
+body.dark-mode .text-muted {
+  color: #e6e6e6 !important;
+}
+
+/* Form Select + Inputs */
+body.dark-mode .form-select,
+body.dark-mode .form-control {
+  background-color: rgb(33, 33, 33) !important;
+  color: #e6e6e6 !important;
+  border-color: #666 !important;
+}
+
+body.dark-mode .form-select:focus,
+body.dark-mode .form-control:focus {
+  background-color: rgb(33, 33, 33) !important;
+  color: #fff !important;
+  border-color: #0d6efd !important;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.35);
+}
+
+/* Buttons */
+body.dark-mode .btn-primary {
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+}
+
+body.dark-mode .btn-outline-primary {
+  color: #9bbcff !important;
+  border-color: #9bbcff !important;
+}
+
+body.dark-mode .btn-outline-primary:hover {
+  background-color: #0d6efd !important;
+  color: white !important;
+}
+
+/* Mode radios + switches */
+body.dark-mode .form-check-label {
+  color: #e6e6e6 !important;
+}
+
+body.dark-mode .form-check-input {
+  background-color: rgb(33, 33, 33);
+  border-color: #777;
+}
+
+body.dark-mode .form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* Timer progress bar */
+body.dark-mode .progress {
+  background-color: rgb(33, 33, 33) !important;
+}
+
+/* Alerts */
+body.dark-mode .alert-warning {
+  background-color: #4d3d00 !important;
+  color: #ffe8a3 !important;
+  border-color: #9c7a00 !important;
+}
+
+/* Links */
+body.dark-mode a {
+  color: #9bbcff;
+}
+
+body.dark-mode a:hover {
+  color: #c8d8ff;
+}
+
+/* Data source warning (explicit) */
+body.dark-mode #dataSourceWarning {
+  background-color: #4d3d00 !important;
+  border-color: #9c7a00 !important;
+  color: #ffe8a3 !important;
+}

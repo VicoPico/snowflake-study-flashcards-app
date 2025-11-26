@@ -7,6 +7,27 @@ import { loadFromJson, loadFromGoogleSheets } from "./data/loaders.js";
 import { dom } from "./ui/dom.js";
 import { renderEmpty } from "./ui/render.js";
 
+function initDarkMode() {
+  const btn = document.getElementById("darkModeToggle");
+  const icon = document.getElementById("darkModeIcon");
+  if (!btn) return;
+
+  const saved = localStorage.getItem("snowpro-dark-mode");
+  const isDark = saved === "1";
+
+  const apply = (enabled) => {
+    document.body.classList.toggle("dark-mode", enabled);
+    localStorage.setItem("snowpro-dark-mode", enabled ? "1" : "0");
+    icon.className = enabled ? "bi bi-moon-fill" : "bi bi-sun-fill";
+  };
+
+  apply(isDark);
+
+  btn.addEventListener("click", () => {
+    apply(!document.body.classList.contains("dark-mode"));
+  });
+}
+
 async function loadDataBySource(source) {
   clearWarning();
 
@@ -51,6 +72,9 @@ async function loadDataBySource(source) {
 }
 
 function init() {
+  // Initialize dark mode toggle
+  initDarkMode();
+
   // Set app version badge
   const versionEl = document.getElementById("appVersion");
   if (versionEl) {
