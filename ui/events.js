@@ -4,18 +4,10 @@ function setModeUI(mode) {
   if (!dom.practiceControls || !dom.testControls) return;
 
   if (mode === "test") {
-    // Show timer container only after mode is selected
-    if (dom.timerContainer) {
-      dom.timerContainer.classList.remove("d-none");
-    }
+    // Only switch visible controls; timer is handled in app.js
     dom.practiceControls.classList.add("d-none");
     dom.testControls.classList.remove("d-none");
   } else if (mode === "practice") {
-    // Show timer container only after mode is selected
-    if (dom.timerContainer) {
-      dom.timerContainer.classList.remove("d-none");
-    }
-
     dom.practiceControls.classList.remove("d-none");
     dom.testControls.classList.add("d-none");
   } else {
@@ -52,8 +44,10 @@ export function bindUIEvents({
       if (dom.modeTestRadio.checked) mode = "test";
       if (dom.modePracticeRadio.checked) mode = "practice";
 
+      // Just toggle layout here
       setModeUI(mode);
 
+      // Let app.js decide behavior (timer, loading questions, etc.)
       if (mode && onModeChange) {
         onModeChange(mode);
       }
@@ -62,7 +56,7 @@ export function bindUIEvents({
     dom.modePracticeRadio.onchange = handleModeChange;
     dom.modeTestRadio.onchange = handleModeChange;
 
-    // Do NOT call handleModeChange() here – wait for the user
+    // Initial state: no mode selected, no controls visible
     setModeUI(null);
   }
 
@@ -71,8 +65,10 @@ export function bindUIEvents({
     dom.startTestBtn.onclick = () => {
       const sizeValue = dom.testSizeSelect.value;
       if (!sizeValue) return;
+
       const size = parseInt(sizeValue, 10);
       if (!size || size <= 0) return;
+
       onStartTest(size);
     };
   }

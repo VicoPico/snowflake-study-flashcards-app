@@ -10,7 +10,7 @@ export const dom = {
   practiceControls: document.getElementById("practiceControls"),
   testControls: document.getElementById("testControls"),
 
-  // Timer container (NEW)
+  // Timer container (NEW / IMPORTANT)
   timerContainer: document.getElementById("timerContainer"),
 
   topicSelect: document.getElementById("topicSelect"),

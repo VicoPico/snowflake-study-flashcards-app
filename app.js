@@ -76,6 +76,8 @@ function init() {
     );
   }
 
+  // Timer is hidden initially by HTML (d-none on #timerContainer)
+
   // Start initial load (questions only; no quiz yet)
   loadDataBySource(defaultSource);
 
@@ -87,16 +89,27 @@ function init() {
     },
     onNext: nextQuestion,
     onSourceChange: loadDataBySource,
-    onStartTest: (size) => startTest(size),
-    onModeChange: (mode) => {
-      if (dom.timerContainer) {
-        dom.timerContainer.classList.remove("d-none");
-      }
 
+    // Start test: start a fixed-size test.
+    // Timer will show automatically when the first question starts.
+    onStartTest: (size) => {
+      startTest(size);
+    },
+
+    // Mode change: decide behavior per mode (but do not touch the timer UI)
+    onModeChange: (mode) => {
       if (mode === "practice") {
+        // Make sure timer is visible in practice mode
+        if (dom.timerContainer) {
+          dom.timerContainer.classList.remove("d-none");
+        }
         // Start practice immediately (all topics by default)
         loadTopic("all");
       } else if (mode === "test") {
+        // Hide timer until user clicks "Start test"
+        if (dom.timerContainer) {
+          dom.timerContainer.classList.add("d-none");
+        }
         // Clear question area and wait for Start test
         renderEmpty('Select a test size and click "Start test" to begin.');
       }

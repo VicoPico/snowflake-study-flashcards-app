@@ -29,6 +29,11 @@ function renderTimer() {
 }
 
 export function startTimer(onTimeout) {
+  // 🚨 NEW: ensure the timer container is visible whenever we actually start a timer
+  if (dom.timerContainer) {
+    dom.timerContainer.classList.remove("d-none");
+  }
+
   stopTimer();
   timeLeft = TIME_LIMIT;
   renderTimer();
@@ -38,7 +43,9 @@ export function startTimer(onTimeout) {
     renderTimer();
     if (timeLeft <= 0) {
       stopTimer();
-      onTimeout();
+      if (typeof onTimeout === "function") {
+        onTimeout();
+      }
     }
   }, 1000);
 }
