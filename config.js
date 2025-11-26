@@ -5,4 +5,7 @@ export const CONFIG = {
 
 export const PASTE_PLACEHOLDER = "PASTE_YOUR_URL_TO_GOOGLE_SHEETS_HERE";
 
-export const TIME_LIMIT = 40; // seconds per question
+export const TIME_LIMIT = 40;
+
+// NEW: app version
+export const APP_VERSION = "v1.0.0";

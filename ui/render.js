@@ -7,12 +7,19 @@ export function renderEmpty(msg) {
   dom.feedback.innerHTML = "";
 }
 
-export function renderQuestion(q, onAnswer) {
+export function renderQuestion(q, onAnswer, currentIndex, totalQuestions) {
   dom.feedback.innerHTML = "";
   dom.optionsContainer.innerHTML = "";
 
   dom.questionTitle.textContent = q.question;
-  dom.questionMeta.textContent = `ID: ${q.id} • Topic: ${q.topic} • Difficulty: ${q.difficulty}`;
+
+  const currentNumber = currentIndex + 1;
+  const remaining = totalQuestions - currentNumber;
+
+  dom.questionMeta.textContent =
+    `ID: ${q.id} • Topic: ${q.topic} • Difficulty: ${q.difficulty} ` +
+    `• Question ${currentNumber} of ${totalQuestions}` +
+    (totalQuestions > 0 ? ` (${remaining} left)` : "");
 
   q.options.forEach((opt, idx) => {
     const btn = document.createElement("button");
@@ -85,4 +92,52 @@ export function renderTopics(topics) {
   });
 
   dom.topicSelect.value = "all";
+}
+
+// ===== Session summary (scoring feedback) =====
+export function renderSummary(stats) {
+  const { correct, wrong, perTopic } = stats;
+  const total = correct + wrong;
+  const accuracy = total ? Math.round((correct / total) * 100) : 0;
+
+  dom.optionsContainer.innerHTML = "";
+  dom.feedback.innerHTML = "";
+
+  dom.questionTitle.textContent = "Session summary";
+  dom.questionMeta.textContent = `Total: ${total} • Correct: ${correct} • Wrong: ${wrong} • Accuracy: ${accuracy}%`;
+
+  const entries = Object.entries(perTopic)
+    .map(([topic, tStats]) => ({
+      topic,
+      correct: tStats.correct || 0,
+      wrong: tStats.wrong || 0,
+    }))
+    .filter((t) => t.correct + t.wrong > 0)
+    .sort((a, b) => b.wrong - a.wrong); // topics with most wrong first
+
+  let html = `<div class="alert alert-info">`;
+
+  if (!entries.length) {
+    html += `<p>No topic-level stats available for this session.</p>`;
+  } else {
+    html += `
+      <h5 class="mb-2">Topics to review</h5>
+      <ul class="mb-0">
+    `;
+    entries.forEach(({ topic, correct, wrong }) => {
+      const tTotal = correct + wrong;
+      const tAcc = tTotal ? Math.round((correct / tTotal) * 100) : 0;
+      html += `
+        <li>
+          <strong>${topic}</strong> – ${wrong} wrong / ${tTotal} total
+          (accuracy: ${tAcc}%)
+        </li>
+      `;
+    });
+    html += `</ul>`;
+  }
+
+  html += `</div>`;
+
+  dom.feedback.innerHTML = html;
 }
