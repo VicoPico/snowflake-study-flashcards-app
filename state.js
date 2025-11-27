@@ -1,3 +1,5 @@
+// state.js
+
 export const state = {
   questionsByTopic: {},
   currentQuestions: [],
@@ -15,15 +17,20 @@ export const state = {
 };
 
 export function setQuestionsByTopic(qbt) {
-  state.questionsByTopic = qbt;
+  state.questionsByTopic = qbt || {};
+}
+
+// NEW: needed by quiz/engine.js
+export function getQuestionsByTopic() {
+  return state.questionsByTopic || {};
 }
 
 export function setCurrentQuestions(arr) {
-  state.currentQuestions = arr;
+  state.currentQuestions = arr || [];
 }
 
 export function setTopic(topic) {
-  state.currentTopic = topic;
+  state.currentTopic = topic || "all";
 }
 
 export function resetIndex() {
@@ -34,12 +41,13 @@ export function nextIndex() {
   state.currentIndex++;
 }
 
+// You can keep this, but we’ll use getQuestionsByTopic() in engine.js
 export function getTopics() {
-  return Object.keys(state.questionsByTopic);
+  return Object.keys(state.questionsByTopic || {}).sort();
 }
 
 export function getAllQuestions() {
-  return Object.values(state.questionsByTopic).flat();
+  return Object.values(state.questionsByTopic || {}).flat();
 }
 
 // ===== Scoring helpers =====
