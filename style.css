@@ -1,9 +1,81 @@
 /* -----------------------------------
-   Light Mode (default)
+   Google Font: INTER
 ----------------------------------- */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
 body {
-  background-color: #f8f9fa;
-  color: #212529;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+/* -----------------------------------
+   LIGHT MODE (default)
+   Snowflake docs–inspired
+----------------------------------- */
+
+body {
+  background-color: #f5f7fa;
+  color: #1d2733;
+}
+
+/* Cards */
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e3e6eb;
+  color: #1d2733;
+  border-radius: 8px;
+}
+
+/* Form controls */
+.form-select,
+.form-control {
+  background-color: #ffffff;
+  color: #1d2733;
+  border-color: #ced4da;
+  border-radius: 6px;
+}
+
+.form-select:focus,
+.form-control:focus {
+  border-color: rgb(74, 126, 234);
+  box-shadow: 0 0 0 0.15rem rgba(74, 126, 234, 0.25);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: rgb(74, 126, 234);
+  border-color: rgb(74, 126, 234);
+}
+
+.btn-primary:hover {
+  background-color: rgb(57, 104, 214);
+  border-color: rgb(57, 104, 214);
+}
+
+.btn-outline-primary {
+  color: rgb(74, 126, 234);
+  border-color: rgb(74, 126, 234);
+}
+
+.btn-outline-primary:hover {
+  background-color: rgb(74, 126, 234);
+  color: #ffffff;
+}
+
+/* Progress bar */
+.progress {
+  background-color: #e3e6eb;
+}
+.progress-bar {
+  background-color: rgb(74, 126, 234);
+}
+
+/* Links */
+a {
+  color: rgb(74, 126, 234);
+}
+a:hover {
+  color: rgb(57, 104, 214);
 }
 
 /* Version badge */
@@ -11,125 +83,163 @@ body {
   font-size: 0.55rem;
   padding: 0.15rem 0.35rem;
   opacity: 0.85;
+  background-color: #d7dce5;
+  color: #1d2733;
+  border-radius: 4px;
 }
 
 /* -----------------------------------
-   DARK MODE (TWO-TONE PALETTE)
-   Background: rgb(50,50,50)
-   Surfaces:   rgb(33,33,33)
+   DARK MODE
+   Snowflake docs–style
+   Title color: rgb(190,196,211)
+   Text color:  rgb(162,171,191)
 ----------------------------------- */
 
 body.dark-mode,
 body.dark-mode html {
-  background-color: rgb(50, 50, 50) !important;
-  color: #f1f1f1;
+  background-color: #1a1f25 !important;
+  color: rgb(162, 171, 191);
 }
 
-/* Make sure the main container blends with background */
 body.dark-mode .container {
   background-color: transparent;
 }
 
-/* Card surfaces */
+/* Cards */
 body.dark-mode .card {
-  background-color: rgb(33, 33, 33) !important;
-  border-color: rgb(22, 22, 22);
-  color: #f1f1f1;
+  background-color: #242a31 !important;
+  border-color: #2e363f;
+  color: rgb(162, 171, 191);
 }
 
 /* Card footer */
 body.dark-mode .card-footer {
-  background-color: rgb(28, 28, 28) !important;
-  border-top-color: rgb(22, 22, 22);
+  background-color: #242a31 !important;
+  border-top-color: #2e363f;
 }
 
-/* General text & labels */
-body.dark-mode label,
-body.dark-mode h1,
+/* ---- DARK MODE TEXT COLORS ---- */
+body.dark-mode h1 {
+  color: rgb(190, 196, 211) !important; /* Title color */
+  font-weight: 700;
+  font-size: 40px;
+}
+
+/* Title styling (Light + Dark mode) */
+h1 {
+  font-weight: 700;
+  font-size: 40px;
+}
+
 body.dark-mode h5,
+body.dark-mode label,
 body.dark-mode p,
 body.dark-mode small,
 body.dark-mode .form-label,
-body.dark-mode .text-muted {
-  color: #e6e6e6 !important;
+body.dark-mode .text-muted,
+body.dark-mode .form-check-label {
+  color: rgb(162, 171, 191) !important; /* Normal text */
 }
 
-/* Form Select + Inputs */
+/* Form controls */
 body.dark-mode .form-select,
 body.dark-mode .form-control {
-  background-color: rgb(33, 33, 33) !important;
-  color: #e6e6e6 !important;
-  border-color: #666 !important;
+  background-color: #242a31 !important;
+  color: rgb(190, 196, 211) !important;
+  border-color: #3a4552 !important;
 }
 
 body.dark-mode .form-select:focus,
 body.dark-mode .form-control:focus {
-  background-color: rgb(33, 33, 33) !important;
-  color: #fff !important;
-  border-color: #0d6efd !important;
-  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.35);
+  background-color: #242a31 !important;
+  border-color: rgb(74, 126, 234) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 0 0.15rem rgba(74, 126, 234, 0.4);
 }
 
-/* Buttons */
+/* Buttons in dark mode */
 body.dark-mode .btn-primary {
-  background-color: #0d6efd !important;
-  border-color: #0d6efd !important;
+  background-color: rgb(74, 126, 234) !important;
+  border-color: rgb(74, 126, 234) !important;
+}
+
+body.dark-mode .btn-primary:hover {
+  background-color: rgb(57, 104, 214) !important;
 }
 
 body.dark-mode .btn-outline-primary {
-  color: #9bbcff !important;
-  border-color: #9bbcff !important;
+  color: rgb(136, 170, 255) !important;
+  border-color: rgb(74, 126, 234) !important;
 }
 
 body.dark-mode .btn-outline-primary:hover {
-  background-color: #0d6efd !important;
+  background-color: rgb(74, 126, 234) !important;
   color: white !important;
 }
 
-/* Mode radios + switches */
-body.dark-mode .form-check-label {
-  color: #e6e6e6 !important;
-}
-
+/* Radio buttons */
 body.dark-mode .form-check-input {
-  background-color: rgb(33, 33, 33);
-  border-color: #777;
+  background-color: #242a31;
+  border-color: #3a4552;
 }
 
 body.dark-mode .form-check-input:checked {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+  background-color: rgb(74, 126, 234);
+  border-color: rgb(74, 126, 234);
 }
 
-/* Timer progress bar */
-body.dark-mode .progress {
-  background-color: rgb(33, 33, 33) !important;
+/* -----------------------------------
+   TIMER BAR CUSTOM COLORS
+----------------------------------- */
+
+/* Normal (bg-primary) */
+#timerBar.bg-primary {
+  background-color: rgb(74, 126, 234) !important;
+}
+
+/* Warning (bg-warning) */
+#timerBar.bg-warning {
+  background-color: rgb(
+    255,
+    193,
+    7
+  ) !important; /* Snowflake-like warm yellow */
+  color: #000 !important;
+}
+
+/* Danger (bg-danger) */
+#timerBar.bg-danger {
+  background-color: rgb(220, 53, 69) !important; /* modern danger red */
+}
+
+/* Ensure dark mode doesn't wash out the bar */
+body.dark-mode #timerBar.bg-primary {
+  background-color: rgb(74, 126, 234) !important;
+}
+body.dark-mode #timerBar.bg-warning {
+  background-color: rgb(255, 193, 7) !important;
+}
+body.dark-mode #timerBar.bg-danger {
+  background-color: rgb(220, 53, 69) !important;
 }
 
 /* Alerts */
 body.dark-mode .alert-warning {
-  background-color: #4d3d00 !important;
-  color: #ffe8a3 !important;
-  border-color: #9c7a00 !important;
+  background-color: #4e3f00 !important;
+  color: #ffdd7c !important;
+  border-color: #8a7000 !important;
 }
 
 /* Links */
 body.dark-mode a {
-  color: #9bbcff;
+  color: rgb(136, 170, 255);
 }
 
 body.dark-mode a:hover {
-  color: #c8d8ff;
+  color: rgb(174, 196, 255);
 }
 
-/* Data source warning (explicit) */
-body.dark-mode #dataSourceWarning {
-  background-color: #4d3d00 !important;
-  border-color: #9c7a00 !important;
-  color: #ffe8a3 !important;
-}
-
-/* Smooth theme transitions */
+/* Smooth transitions */
 body,
 .card,
 .form-select,
@@ -139,6 +249,6 @@ body,
 .progress,
 .form-check-input,
 .form-check-label {
-  transition: background-color 0.6s ease, color 0.6s ease,
-    border-color 0.6s ease;
+  transition: background-color 0.45s ease, color 0.45s ease,
+    border-color 0.45s ease;
 }
