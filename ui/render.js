@@ -1,143 +1,161 @@
+// ui/render.js
 import { dom } from "./dom.js";
 
-export function renderEmpty(msg) {
-  dom.questionTitle.textContent = msg;
-  dom.questionMeta.textContent = "";
-  dom.optionsContainer.innerHTML = "";
-  dom.feedback.innerHTML = "";
+export function renderEmpty(message) {
+  if (dom.questionTitle) dom.questionTitle.textContent = message;
+  if (dom.optionsContainer) dom.optionsContainer.innerHTML = "";
+  if (dom.feedback) dom.feedback.innerHTML = "";
+  if (dom.questionMeta) dom.questionMeta.textContent = "";
 }
 
-export function renderQuestion(q, onAnswer, currentIndex, totalQuestions) {
-  dom.feedback.innerHTML = "";
-  dom.optionsContainer.innerHTML = "";
+export function renderMeta(
+  question,
+  { index, total, isTestMode, correctCount, answeredCount }
+) {
+  if (!dom.questionMeta) return;
 
-  dom.questionTitle.textContent = q.question;
+  const parts = [];
 
-  const currentNumber = currentIndex + 1;
-  const remaining = totalQuestions - currentNumber;
+  if (question.id) parts.push(`ID: ${question.id}`);
+  if (question.topic) parts.push(`Topic: ${question.topic}`);
+  parts.push(`Q ${index} of ${total}`);
 
-  dom.questionMeta.textContent =
-    `ID: ${q.id} • Topic: ${q.topic} • Difficulty: ${q.difficulty} ` +
-    `• Question ${currentNumber} of ${totalQuestions}` +
-    (totalQuestions > 0 ? ` (${remaining} left)` : "");
+  if (isTestMode) {
+    parts.push(`Score: ${correctCount}/${answeredCount || 0}`);
+  }
 
-  q.options.forEach((opt, idx) => {
-    const btn = document.createElement("button");
-    btn.className = "btn btn-outline-primary w-100 text-start mb-2";
-    btn.textContent = opt;
-    btn.onclick = () => onAnswer(idx, btn);
-    dom.optionsContainer.appendChild(btn);
-  });
+  dom.questionMeta.textContent = parts.join(" • ");
 }
 
-export function renderAnswerResult(question, chosenIndex, clickedButton) {
-  const buttons = dom.optionsContainer.querySelectorAll("button");
-  buttons.forEach((b) => (b.disabled = true));
+export function renderQuestion(question, { onAnswer }) {
+  if (!dom.questionTitle || !dom.optionsContainer || !dom.feedback) return;
+  if (!onAnswer) return;
 
-  const isCorrect = chosenIndex === question.correct_index;
+  dom.questionTitle.textContent = question.question || "";
+  dom.optionsContainer.innerHTML = "";
+  dom.feedback.innerHTML = "";
 
-  if (isCorrect) {
-    clickedButton.classList.replace("btn-outline-primary", "btn-success");
-    dom.feedback.innerHTML = `
-      <div class="alert alert-success">
-        <strong>Correct.</strong><br>${question.explanation}
-      </div>
-    `;
+  if (question.isMulti) {
+    // Multi-select: checkboxes + submit button
+    question.options.forEach((opt, idx) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "form-check mb-1";
+
+      const input = document.createElement("input");
+      input.className = "form-check-input";
+      input.type = "checkbox";
+      input.id = `qopt-${idx}`;
+      input.value = String(idx);
+
+      const label = document.createElement("label");
+      label.className = "form-check-label";
+      label.htmlFor = input.id;
+      label.textContent = opt;
+
+      wrapper.appendChild(input);
+      wrapper.appendChild(label);
+      dom.optionsContainer.appendChild(wrapper);
+    });
+
+    const submitBtn = document.createElement("button");
+    submitBtn.className = "btn btn-outline-primary w-100 mt-2";
+    submitBtn.textContent = "Submit answer";
+
+    submitBtn.onclick = () => {
+      const checks = dom.optionsContainer.querySelectorAll(
+        "input.form-check-input"
+      );
+      const selected = [];
+      checks.forEach((c, idx) => {
+        if (c.checked) selected.push(idx);
+        c.disabled = true;
+      });
+      submitBtn.disabled = true;
+      onAnswer(selected);
+    };
+
+    dom.optionsContainer.appendChild(submitBtn);
   } else {
-    clickedButton.classList.replace("btn-outline-primary", "btn-danger");
-    const correctAnswer = question.options[question.correct_index];
-    dom.feedback.innerHTML = `
-      <div class="alert alert-danger">
-        <strong>Incorrect.</strong><br>
-        Correct answer: <strong>${correctAnswer}</strong><br>
-        ${question.explanation}
-      </div>
-    `;
+    // Single-answer: buttons
+    question.options.forEach((opt, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "btn btn-outline-primary w-100 text-start mb-2";
+      btn.textContent = opt;
+
+      btn.onclick = () => {
+        const allBtns = dom.optionsContainer.querySelectorAll("button");
+        allBtns.forEach((b) => (b.disabled = true));
+        onAnswer([idx]);
+      };
+
+      dom.optionsContainer.appendChild(btn);
+    });
   }
 }
 
-export function renderTimeout(question) {
+export function renderFeedback(
+  question,
+  { selectedIndices, correctIndices, isCorrect }
+) {
+  if (!dom.feedback || !dom.optionsContainer) return;
+
+  const safeSelected = Array.isArray(selectedIndices) ? selectedIndices : [];
+  const safeCorrect = Array.isArray(correctIndices) ? correctIndices : [];
+
+  const correctTexts = safeCorrect
+    .map((i) => question.options?.[i])
+    .filter(Boolean);
+
+  // Colorize options
   const buttons = dom.optionsContainer.querySelectorAll("button");
-  buttons.forEach((b) => (b.disabled = true));
+  const checks = dom.optionsContainer.querySelectorAll(
+    "input.form-check-input"
+  );
 
-  buttons.forEach((b, i) => {
-    if (i === question.correct_index) {
-      b.classList.replace("btn-outline-primary", "btn-success");
-    }
-  });
+  if (buttons.length) {
+    buttons.forEach((btn, idx) => {
+      const isSel = safeSelected.includes(idx);
+      const isCor = safeCorrect.includes(idx);
 
-  const correctAnswer = question.options[question.correct_index];
+      btn.classList.remove("btn-outline-primary", "btn-success", "btn-danger");
+
+      if (isCor) {
+        btn.classList.add("btn-success");
+      } else if (isSel && !isCor) {
+        btn.classList.add("btn-danger");
+      } else {
+        btn.classList.add("btn-outline-primary");
+      }
+    });
+  } else if (checks.length) {
+    checks.forEach((chk, idx) => {
+      const isSel = safeSelected.includes(idx);
+      const isCor = safeCorrect.includes(idx);
+      const label = chk.nextElementSibling;
+      if (!label) return;
+
+      label.classList.remove("text-success", "text-danger");
+
+      if (isCor) {
+        label.classList.add("text-success");
+      } else if (isSel && !isCor) {
+        label.classList.add("text-danger");
+      }
+    });
+  }
+
+  const explanation = question.explanation || "";
+  const correctHtml = correctTexts.length
+    ? `<div>Correct answer(s): <strong>${correctTexts.join(
+        ", "
+      )}</strong></div>`
+    : "";
 
   dom.feedback.innerHTML = `
-    <div class="alert alert-warning">
-      <strong>Time’s up.</strong><br>
-      Correct answer: <strong>${correctAnswer}</strong><br>
-      ${question.explanation}
+    <div class="alert ${isCorrect ? "alert-success" : "alert-danger"}">
+      <strong>${isCorrect ? "Correct." : "Incorrect."}</strong><br>
+      ${correctHtml}
+      ${explanation}
     </div>
   `;
-}
-
-export function renderTopics(topics) {
-  dom.topicSelect.innerHTML = "";
-  const optAll = document.createElement("option");
-  optAll.value = "all";
-  optAll.textContent = "All topics";
-  dom.topicSelect.appendChild(optAll);
-
-  topics.forEach((topic) => {
-    const opt = document.createElement("option");
-    opt.value = topic;
-    opt.textContent = topic;
-    dom.topicSelect.appendChild(opt);
-  });
-
-  dom.topicSelect.value = "all";
-}
-
-// ===== Session summary (scoring feedback) =====
-export function renderSummary(stats) {
-  const { correct, wrong, perTopic } = stats;
-  const total = correct + wrong;
-  const accuracy = total ? Math.round((correct / total) * 100) : 0;
-
-  dom.optionsContainer.innerHTML = "";
-  dom.feedback.innerHTML = "";
-
-  dom.questionTitle.textContent = "Session summary";
-  dom.questionMeta.textContent = `Total: ${total} • Correct: ${correct} • Wrong: ${wrong} • Accuracy: ${accuracy}%`;
-
-  const entries = Object.entries(perTopic)
-    .map(([topic, tStats]) => ({
-      topic,
-      correct: tStats.correct || 0,
-      wrong: tStats.wrong || 0,
-    }))
-    .filter((t) => t.correct + t.wrong > 0)
-    .sort((a, b) => b.wrong - a.wrong); // topics with most wrong first
-
-  let html = `<div class="alert alert-info">`;
-
-  if (!entries.length) {
-    html += `<p>No topic-level stats available for this session.</p>`;
-  } else {
-    html += `
-      <h5 class="mb-2">Topics to review</h5>
-      <ul class="mb-0">
-    `;
-    entries.forEach(({ topic, correct, wrong }) => {
-      const tTotal = correct + wrong;
-      const tAcc = tTotal ? Math.round((correct / tTotal) * 100) : 0;
-      html += `
-        <li>
-          <strong>${topic}</strong> – ${wrong} wrong / ${tTotal} total
-          (accuracy: ${tAcc}%)
-        </li>
-      `;
-    });
-    html += `</ul>`;
-  }
-
-  html += `</div>`;
-
-  dom.feedback.innerHTML = html;
 }

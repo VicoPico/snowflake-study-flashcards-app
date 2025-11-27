@@ -1,829 +1,216 @@
 {
-  "access_control": [
+  "accounts_security": [
     {
-      "id": "SPC-001",
-      "question": "Which role has the highest level of privileges within a Snowflake account?",
-      "options": ["ACCOUNTADMIN", "SECURITYADMIN", "SYSADMIN", "USERADMIN"],
-      "correct_index": 0,
-      "explanation": "ACCOUNTADMIN is the top-level administrative role.",
-      "topic": "access_control",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["access_control", "user_management"]
-    },
-    {
-      "id": "SPC-002",
-      "question": "What is required to grant a privilege on a table to a role?",
-      "options": [
-        "Use ALTER ROLE",
-        "Use SET PRIVILEGE",
-        "Use GRANT <privilege> ON TABLE",
-        "Use GRANT USER TO TABLE"
-      ],
+      "topic": "accounts_security",
+      "id": "SEC-001",
+      "question": "A new Snowflake account has just been created. Which role has the highest level of privileges within that account and is typically used for account-wide configuration?",
+      "options": ["ORGADMIN", "SYSADMIN", "ACCOUNTADMIN", "SECURITYADMIN"],
       "correct_index": 2,
-      "explanation": "Privileges are granted using GRANT statements on objects.",
-      "topic": "access_control",
-      "difficulty": "medium",
+      "correct_indices": [],
+      "explanation": "Within a single Snowflake account, ACCOUNTADMIN is the top-level role responsible for account-wide configuration, billing, and security-related settings. ORGADMIN operates at the organization level across multiple accounts.",
+      "difficulty": "easy",
       "source_type": "mock",
-      "tags": ["access_control", "user_management"]
-    }
-  ],
-  "architecture": [
-    {
-      "id": "SPC-009",
-      "question": "Which of the following are Snowgrid capabilities?",
-      "options": [
-        "Single\u2011cloud workload isolation.",
-        "Local disk caching inside a warehouse.",
-        "Client\u2011side encryption only.",
-        "Cross\u2011cloud/region replication and secure collaboration across clouds."
-      ],
-      "correct_index": 3,
-      "explanation": "Snowgrid is Snowflake\u2019s cross\u2011cloud, cross\u2011region technology layer.",
-      "topic": "architecture",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["architecture"]
+      "tags": ["roles", "accountadmin", "accounts"]
     },
     {
-      "id": "SPC-010",
-      "question": "Snowflake is available in four editions. Which are they?",
+      "topic": "accounts_security",
+      "id": "SEC-002",
+      "question": "A security engineer wants to enforce that users can sign in to Snowflake only from the corporate IP ranges. Which feature should they configure?",
       "options": [
-        "Standard, Enterprise, Business Critical, and Virtual Private Snowflake (VPS).",
-        "Free, Pro, Business, and VPS.",
-        "Standard, Enterprise, Developer, and Government.",
-        "Enterprise, Business Critical, VPS, and Local."
+        "Network policies restricting allowed IP addresses",
+        "Session parameters that limit login times",
+        "Warehouse resource monitors",
+        "Session-level query tags"
       ],
       "correct_index": 0,
-      "explanation": "These are the four commercial editions listed by Snowflake.",
-      "topic": "architecture",
-      "difficulty": "medium",
+      "correct_indices": [],
+      "explanation": "Network policies allow administrators to define allowed and blocked IP address ranges for Snowflake access at the account and user level.",
+      "difficulty": "easy",
       "source_type": "mock",
-      "tags": ["architecture"]
-    }
-  ],
-  "clustering": [
-    {
-      "id": "SPC-014",
-      "question": "Max recommended number of clustering key columns?",
-      "options": ["5\u20138", "Exactly 4", "Unlimited", "1\u20133"],
-      "correct_index": 3,
-      "explanation": "Clustering keys should be narrow.",
-      "topic": "clustering",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["clustering"]
+      "tags": ["network policy", "security", "ip restrictions"]
     },
     {
-      "id": "SPC-015",
-      "question": "What is the primary purpose of clustering in Snowflake?",
+      "topic": "accounts_security",
+      "id": "SEC-003",
+      "question": "Which roles are primarily responsible for user and role management in a Snowflake account? (Select all that apply.)",
+      "options": ["SECURITYADMIN", "USERADMIN", "SYSADMIN", "ORGADMIN"],
+      "correct_index": 0,
+      "correct_indices": [0, 1],
+      "explanation": "SECURITYADMIN can manage grants and security-related objects, while USERADMIN is dedicated to creating and managing users and roles. SYSADMIN focuses on objects like warehouses and databases; ORGADMIN operates at the organization level.",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["roles", "securityadmin", "useradmin", "multi-select"]
+    },
+    {
+      "topic": "accounts_security",
+      "id": "SEC-004",
+      "question": "A compliance policy requires that highly privileged users must use multi-factor authentication (MFA) when signing in with Snowflake-provided credentials. Which configuration is MOST appropriate?",
       "options": [
-        "Improve query performance on large tables with predictable filter patterns",
-        "Improve stage scanning",
-        "Increase compute power automatically",
-        "Reduce storage cost"
+        "Enable MFA for the ACCOUNTADMIN and SECURITYADMIN users via Snowflake Web UI or SQL commands",
+        "Enable auto-suspend for all warehouses used by ACCOUNTADMIN",
+        "Create a separate warehouse that only ACCOUNTADMIN can use",
+        "Grant ACCOUNTADMIN role to more users so no single user is critical"
       ],
       "correct_index": 0,
-      "explanation": "Clustering helps Snowflake prune micro-partitions for faster selective queries.",
-      "topic": "clustering",
+      "correct_indices": [],
+      "explanation": "Enabling MFA on privileged accounts (like ACCOUNTADMIN and SECURITYADMIN) is a key Snowflake best practice to strengthen authentication for users with broad access.",
       "difficulty": "medium",
       "source_type": "mock",
-      "tags": ["clustering"]
-    }
-  ],
-  "connecting_to_snowflake": [
-    {
-      "id": "SPC-025",
-      "question": "What authentication methods does Snowflake support for client connections?",
-      "options": [
-        "Kerberos only",
-        "Username/password only",
-        "Password + MFA only",
-        "Key-pair authentication, OAuth, SSO/SAML, and username/password"
-      ],
-      "correct_index": 3,
-      "explanation": "Snowflake supports several auth mechanisms including key\u2011pair, OAuth, SAML/SSO, and passwords.",
-      "topic": "connecting_to_snowflake",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["connecting"]
+      "tags": ["mfa", "security", "best practices"]
     },
     {
-      "id": "SPC-026",
-      "question": "What is required when connecting via key-pair authentication?",
+      "topic": "accounts_security",
+      "id": "SEC-005",
+      "question": "A security analyst needs to audit which queries accessed sensitive tables and which roles were used. Which Snowflake views should they rely on primarily? (Select all that apply.)",
       "options": [
-        "Only a public key is required",
-        "A warehouse must be running",
-        "A private key stored locally and the public key registered in Snowflake",
-        "Keys must be rotated manually each day"
-      ],
-      "correct_index": 2,
-      "explanation": "Key\u2011pair auth uses asymmetric keys; Snowflake stores the public key.",
-      "topic": "connecting_to_snowflake",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["connecting"]
-    }
-  ],
-  "cost_management": [
-    {
-      "id": "SPC-034",
-      "question": "How can ACCOUNTADMIN view automatic clustering billing?",
-      "options": [
-        "Query AUTOMATIC_CLUSTERING_HISTORY in ACCOUNT_USAGE.",
-        "Query QUERY_HISTORY;",
-        "Use LIST STAGES;",
-        "SHOW BILLING;"
+        "SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY",
+        "SNOWFLAKE.ACCOUNT_USAGE.ACCESS_HISTORY",
+        "INFORMATION_SCHEMA.TABLES",
+        "SNOWFLAKE.ACCOUNT_USAGE.LOGIN_HISTORY"
       ],
       "correct_index": 0,
-      "explanation": "ACCOUNT_USAGE has clustering cost details.",
-      "topic": "cost_management",
-      "difficulty": "medium",
+      "correct_indices": [0, 1],
+      "explanation": "QUERY_HISTORY provides details about executed queries, including SQL text and warehouse used. ACCESS_HISTORY adds object-level access information, including which roles accessed which tables and columns.",
+      "difficulty": "hard",
       "source_type": "mock",
-      "tags": ["billing"]
+      "tags": [
+        "governance",
+        "auditing",
+        "query_history",
+        "access_history",
+        "multi-select"
+      ]
     },
     {
-      "id": "SPC-035",
-      "question": "What determines credit consumption for a warehouse?",
+      "topic": "accounts_security",
+      "id": "SEC-006",
+      "question": "In a role-based access control (RBAC) design in Snowflake, which practice is MOST aligned with least privilege?",
       "options": [
-        "Cloud region",
-        "Amount of data scanned",
-        "Network latency",
-        "Warehouse size and runtime"
-      ],
-      "correct_index": 3,
-      "explanation": "Credits are billed based on warehouse size (XS\u20136XL) and how long it runs.",
-      "topic": "cost_management",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["cost", "management"]
-    }
-  ],
-  "data_loading": [
-    {
-      "id": "SPC-047",
-      "question": "Which COPY INTO options allow data transformation?",
-      "options": [
-        "COPY does not allow transformations.",
-        "Only FILE_FORMAT supports transformation.",
-        "Using COPY INTO <table> FROM (SELECT ... FROM @stage);",
-        "Only Snowpipe can transform data."
-      ],
-      "correct_index": 2,
-      "explanation": "Transformations use COPY INTO with a SELECT wrapper.",
-      "topic": "data_loading",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["copy"]
-    },
-    {
-      "id": "SPC-048",
-      "question": "How to unload data into a single file?",
-      "options": [
-        "Set MAX_FILES=0;",
-        "Use UNLOAD SINGLE FILE;",
-        "Use COPY INTO @stage FILES=1 SINGLE=TRUE;",
-        "Use RESULT_SCAN;"
-      ],
-      "correct_index": 2,
-      "explanation": "SINGLE=TRUE forces one output file.",
-      "topic": "data_loading",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["copy"]
-    }
-  ],
-  "data_protection": [
-    {
-      "id": "SPC-067",
-      "question": "Which Snowflake feature allows accessing historical data that has been changed or deleted?",
-      "options": [
-        "Clustering",
-        "Materialized Views",
-        "Fail-safe",
-        "Time Travel"
-      ],
-      "correct_index": 3,
-      "explanation": "Time Travel enables querying historical state within a defined retention period.",
-      "topic": "data_protection",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["data_protection"]
-    },
-    {
-      "id": "SPC-068",
-      "question": "What is the purpose of Fail-safe?",
-      "options": [
-        "To provide a final recovery period for catastrophic failures",
-        "To reduce storage cost",
-        "To purge old micro-partitions",
-        "To extend Time Travel indefinitely"
-      ],
-      "correct_index": 0,
-      "explanation": "Fail-safe provides 7 days of recovery after Time Travel expires.",
-      "topic": "data_protection",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["data_protection"]
-    }
-  ],
-  "data_sharing": [
-    {
-      "id": "SPC-075",
-      "question": "Which privileges are provided with a share by the data provider?",
-      "options": [
-        "INSERT/UPDATE on shared tables.",
-        "OWNERSHIP on the database.",
-        "OPERATE on warehouses.",
-        "USAGE on the database/schema and SELECT on shared objects."
-      ],
-      "correct_index": 3,
-      "explanation": "Shares grant read\u2011only access: USAGE + SELECT.",
-      "topic": "data_sharing",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["data_sharing"]
-    },
-    {
-      "id": "SPC-076",
-      "question": "Which database objects can be shared using Secure Data Sharing?",
-      "options": [
-        "Network policies.",
-        "Warehouses and tasks.",
-        "Tables, dynamic/external tables, and secure views/materialized views.",
-        "Stored procedures and non\u2011secure views."
-      ],
-      "correct_index": 2,
-      "explanation": "Shares support read\u2011only database objects including secure views.",
-      "topic": "data_sharing",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["data_sharing"]
-    }
-  ],
-  "functions_procedures_scripting": [
-    {
-      "id": "SPC-089",
-      "question": "Which language can be used to write Snowflake stored procedures?",
-      "options": [
-        "JavaScript or SQL (Snowflake Scripting)",
-        "Go",
-        "Scala",
-        "Python"
-      ],
-      "correct_index": 0,
-      "explanation": "Stored procedures support JavaScript and SQL via Snowflake Scripting.",
-      "topic": "functions_procedures_scripting",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["functions", "procedures", "scripting"]
-    },
-    {
-      "id": "SPC-090",
-      "question": "What does RETURN in Snowflake Scripting do?",
-      "options": [
-        "Stops the warehouse",
-        "Commits a transaction automatically",
-        "Returns a value from a stored procedure or block",
-        "Creates a temporary table"
-      ],
-      "correct_index": 2,
-      "explanation": "RETURN exits the procedure or block and outputs a value.",
-      "topic": "functions_procedures_scripting",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["functions", "procedures", "scripting"]
-    }
-  ],
-  "governance": [
-    {
-      "id": "SPC-097",
-      "question": "Which schema is used to view storage, compute, and object usage metrics for a Snowflake account?",
-      "options": [
-        "INFORMATION_SCHEMA",
-        "PUBLIC",
-        "SNOWFLAKE.ACCOUNT_USAGE",
-        "SNOWFLAKE.DATA_USAGE"
-      ],
-      "correct_index": 2,
-      "explanation": "ACCOUNT_USAGE in the SNOWFLAKE database provides historical usage views.",
-      "topic": "governance",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["governance"]
-    },
-    {
-      "id": "SPC-098",
-      "question": "Snowsight Query History page shows queries executed in the last 31 days. (True/False)",
-      "options": [
-        "Only when result cache is enabled.",
-        "TRUE",
-        "Only for ACCOUNTADMIN users.",
-        "FALSE"
-      ],
-      "correct_index": 3,
-      "explanation": "The Snowsight Query History page shows ~14 days; ACCOUNT_USAGE holds 1 year.",
-      "topic": "governance",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["governance"]
-    }
-  ],
-  "overview_architecture": [
-    {
-      "id": "SPC-109",
-      "question": "What best describes Snowflake\u2019s overall architecture?",
-      "options": [
-        "Hybrid row-column engine",
-        "Multi-cluster shared data architecture",
-        "Shared-nothing architecture",
-        "Shared-disk architecture"
+        "Grant all permissions directly to the ACCOUNTADMIN role and assign it to all users",
+        "Create task-specific roles (e.g., ANALYST, ETL_LOADER) and grant them only the minimum privileges required",
+        "Assign multiple system-defined roles to each user to cover all use cases",
+        "Use the PUBLIC role to grant access to most shared objects"
       ],
       "correct_index": 1,
-      "explanation": "Snowflake separates compute from storage using a multi\u2011cluster shared\u2011data model.",
-      "topic": "overview_architecture",
+      "correct_indices": [],
+      "explanation": "Best practice is to design custom roles around tasks or job functions (e.g., ANALYST) and grant only the necessary privileges, then assign these roles to users instead of defaulting to highly privileged roles.",
       "difficulty": "medium",
       "source_type": "mock",
-      "tags": ["overview", "architecture"]
+      "tags": ["rbac", "roles", "least privilege"]
     },
     {
-      "id": "SPC-110",
-      "question": "What component handles authentication, optimization, and metadata management?",
+      "topic": "accounts_security",
+      "id": "SEC-007",
+      "question": "A security architect wants to protect sensitive columns (such as credit card numbers) so that only users with a special role can see the clear text, while others see masked values. Which Snowflake features should be used together to implement this requirement? (Select all that apply.)",
       "options": [
-        "Client layer",
-        "Cloud Services layer",
-        "Virtual Warehouse layer",
-        "Storage layer"
-      ],
-      "correct_index": 1,
-      "explanation": "Cloud Services is the control plane managing security, metadata, and optimization.",
-      "topic": "overview_architecture",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["overview", "architecture"]
-    }
-  ],
-  "performance": [
-    {
-      "id": "SPC-117",
-      "question": "The major benefits of defining clustering keys are:",
-      "options": [
-        "Eliminating Time Travel storage.",
-        "Improved micro\u2011partition pruning for common filter patterns.",
-        "Automatic primary key indexing.",
-        "Enforced uniqueness constraints."
-      ],
-      "correct_index": 1,
-      "explanation": "Clustering can reduce scanned data for predicates aligned to the key.",
-      "topic": "performance",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["performance"]
-    },
-    {
-      "id": "SPC-118",
-      "question": "Does Snowflake automatically and transparently maintain materialized views? (True/False)",
-      "options": [
-        "FALSE",
-        "Only in Standard Edition.",
-        "Only if you run REFRESH MATERIALIZED VIEW.",
-        "TRUE"
-      ],
-      "correct_index": 3,
-      "explanation": "Snowflake maintains materialized views automatically as base data changes.",
-      "topic": "performance",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["performance"]
-    }
-  ],
-  "query_performance": [
-    {
-      "id": "SPC-124",
-      "question": "What does high 'bytes spilled to remote storage' in a query profile indicate?",
-      "options": [
-        "Too many micro-partitions scanned",
-        "Excessive clustering keys",
-        "Insufficient warehouse memory for the workload",
-        "Missing result cache"
-      ],
-      "correct_index": 2,
-      "explanation": "Spilling occurs when memory is insufficient, slowing execution.",
-      "topic": "query_performance",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["query_performance"]
-    },
-    {
-      "id": "SPC-125",
-      "question": "What is a recommended solution when a warehouse shows heavy queuing?",
-      "options": [
-        "Reduce Time Travel retention",
-        "Increase warehouse size or enable multi\u2011cluster",
-        "Disable auto-suspend",
-        "Suspend the warehouse"
-      ],
-      "correct_index": 1,
-      "explanation": "Queuing indicates concurrency pressure; scaling compute helps.",
-      "topic": "query_performance",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["query_performance"]
-    }
-  ],
-  "replication": [
-    {
-      "id": "SPC-133",
-      "question": "Which objects/features are not available for replication in the Standard Edition of Snowflake?",
-      "options": [
-        "Secure data sharing objects.",
-        "Dynamic tables.",
-        "Account object replication via failover groups (e.g., users/roles/warehouses).",
-        "Database replication across regions."
-      ],
-      "correct_index": 2,
-      "explanation": "Failover groups and account-object replication require Enterprise or higher.",
-      "topic": "replication",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["replication"]
-    },
-    {
-      "id": "SPC-134",
-      "question": "Which view shows replication history?",
-      "options": [
-        "OBJECT_REPL_HISTORY",
-        "ACCOUNT_HISTORY",
-        "FAILSAFE_HISTORY",
-        "REPLICATION_DATABASE_HISTORY"
-      ],
-      "correct_index": 3,
-      "explanation": "ACCOUNT_USAGE provides replication history.",
-      "topic": "replication",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["replication"]
-    }
-  ],
-  "security": [
-    {
-      "id": "SPC-135",
-      "question": "Which SQL command helps determine whether a network policy is set at the account or user level?",
-      "options": [
-        "DESCRIBE NETWORK POLICY <name>;",
-        "SHOW NETWORK POLICIES;",
-        "SHOW GRANTS ON ACCOUNT;",
-        "SHOW PARAMETERS LIKE 'NETWORK_POLICY' IN ACCOUNT / IN USER <username>;"
-      ],
-      "correct_index": 3,
-      "explanation": "Network policy assignment is visible via SHOW PARAMETERS on ACCOUNT or USER.",
-      "topic": "security",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["security"]
-    },
-    {
-      "id": "SPC-136",
-      "question": "A user\u2019s default role is assigned when the user:",
-      "options": [
-        "Runs their first query.",
-        "Is granted the PUBLIC role.",
-        "Logs in / starts a session in Snowflake.",
-        "Creates their first warehouse."
-      ],
-      "correct_index": 2,
-      "explanation": "The DEFAULT_ROLE property determines the initial role at login.",
-      "topic": "security",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["security"]
-    }
-  ],
-  "semi_structured_data": [
-    {
-      "id": "SPC-157",
-      "question": "John is loading huge JSON arrays. What should he do?",
-      "options": [
-        "Disable compression.",
-        "Convert JSON to CSV.",
-        "Split large arrays into multiple smaller JSON objects.",
-        "Increase VARIANT limit to 64 MB."
-      ],
-      "correct_index": 2,
-      "explanation": "VARIANT max ~16MB, so splitting is required.",
-      "topic": "semi_structured_data",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["semi_structured"]
-    },
-    {
-      "id": "SPC-158",
-      "question": "What data type does Snowflake use to store semi-structured data formats like JSON?",
-      "options": ["ARRAY", "TEXT", "OBJECT", "VARIANT"],
-      "correct_index": 3,
-      "explanation": "VARIANT can store JSON, Avro, ORC, Parquet, and XML efficiently.",
-      "topic": "semi_structured_data",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["semi_structured"]
-    }
-  ],
-  "snowflake_ai_ml": [
-    {
-      "id": "SPC-167",
-      "question": "What is the purpose of Snowflake Cortex?",
-      "options": [
-        "To provide built\u2011in AI and ML inference capabilities inside Snowflake",
-        "To replace external ML services",
-        "To manage virtual warehouse scaling",
-        "To process unstructured data only"
+        "Dynamic data masking policies",
+        "Role-based access control with dedicated roles",
+        "Network policies configured on the account",
+        "Virtual warehouses dedicated to sensitive workloads"
       ],
       "correct_index": 0,
-      "explanation": "Cortex enables in\u2011platform LLM inference, embeddings, and model execution.",
-      "topic": "snowflake_ai_ml",
+      "correct_indices": [0, 1],
+      "explanation": "Dynamic data masking policies can conditionally mask column values based on the current role. Combined with RBAC and dedicated roles, this ensures only authorized roles see unmasked data.",
       "difficulty": "medium",
       "source_type": "mock",
-      "tags": ["ai", "ml"]
+      "tags": ["masking", "rbac", "data protection", "multi-select"]
     },
     {
-      "id": "SPC-168",
-      "question": "What does Snowflake\u2019s Feature Store help with?",
+      "topic": "accounts_security",
+      "id": "SEC-008",
+      "question": "Which statement best describes the PUBLIC role in Snowflake?",
       "options": [
-        "Scaling compute for training",
-        "Centralized management and reuse of ML features",
-        "Managing network policies",
-        "Encrypting data automatically"
-      ],
-      "correct_index": 1,
-      "explanation": "Feature Store ensures consistency, reuse, and governance of ML features.",
-      "topic": "snowflake_ai_ml",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["ai", "ml"]
-    }
-  ],
-  "snowpipe": [
-    {
-      "id": "SPC-175",
-      "question": "Which command lists pipes you have privilege on?",
-      "options": [
-        "LIST @pipes;",
-        "SHOW STREAMS;",
-        "DESCRIBE PIPE;",
-        "SHOW PIPES;"
-      ],
-      "correct_index": 3,
-      "explanation": "SHOW PIPES displays accessible pipes.",
-      "topic": "snowpipe",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["snowpipe"]
-    }
-  ],
-  "sql": [
-    {
-      "id": "SPC-176",
-      "question": "Nils wants to delete all data from table t1 but keep the table structure. Which command should he use?",
-      "options": [
-        "REMOVE TABLE t1;",
-        "DROP TABLE t1;",
-        "TRUNCATE TABLE t1;",
-        "DELETE FROM t1;"
-      ],
-      "correct_index": 2,
-      "explanation": "TRUNCATE removes all rows while preserving the table definition.",
-      "topic": "sql",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["sql"]
-    },
-    {
-      "id": "SPC-177",
-      "question": "Which of these is NOT a DML command?",
-      "options": ["CREATE TABLE", "INSERT", "UPDATE", "MERGE"],
-      "correct_index": 0,
-      "explanation": "CREATE is DDL; INSERT/UPDATE/MERGE are DML.",
-      "topic": "sql",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["sql"]
-    }
-  ],
-  "sql_support": [
-    {
-      "id": "SPC-187",
-      "question": "Which SQL construct does Snowflake use to handle semi-structured data such as JSON?",
-      "options": [
-        "ARRAY only",
-        "VARIANT data type",
-        "HSTORE data type",
-        "BLOB data type"
-      ],
-      "correct_index": 1,
-      "explanation": "Snowflake uses VARIANT to store semi-structured formats like JSON, Avro, Parquet.",
-      "topic": "sql_support",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["sql"]
-    },
-    {
-      "id": "SPC-188",
-      "question": "What is the purpose of the FLATTEN table function?",
-      "options": [
-        "To optimize clustering",
-        "To remove null fields",
-        "To expand semi\u2011structured arrays or objects into rows",
-        "To compress VARIANT columns"
-      ],
-      "correct_index": 2,
-      "explanation": "FLATTEN turns nested arrays/objects inside VARIANT into tabular row sets.",
-      "topic": "sql_support",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["sql"]
-    }
-  ],
-  "statistics": [
-    {
-      "id": "SPC-199",
-      "question": "Which algorithm estimates distinct values?",
-      "options": ["Bloom filter", "MinHash", "HyperLogLog", "K\u2011Means"],
-      "correct_index": 2,
-      "explanation": "Snowflake uses HyperLogLog for NDV estimates.",
-      "topic": "statistics",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["statistics"]
-    }
-  ],
-  "storage": [
-    {
-      "id": "SPC-200",
-      "question": "Can Time Travel be disabled for an account by ACCOUNTADMIN?",
-      "options": [
-        "No, Time Travel is always on.",
-        "Yes, by setting DATA_RETENTION_TIME_IN_DAYS = 0 at the account level.",
-        "Only transient tables can disable it.",
-        "Only Enterprise Edition accounts can disable it."
-      ],
-      "correct_index": 1,
-      "explanation": "ACCOUNTADMIN can set default retention to 0, effectively disabling Time Travel for new objects.",
-      "topic": "storage",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["storage"]
-    },
-    {
-      "id": "SPC-201",
-      "question": "Which function helps generate a File URL for an unstructured data file on a stage?",
-      "options": [
-        "GET_PRESIGNED_URL",
-        "SYSTEM$FILE_URL",
-        "GET_STAGE_LOCATION",
-        "BUILD_STAGE_FILE_URL"
-      ],
-      "correct_index": 3,
-      "explanation": "BUILD_STAGE_FILE_URL creates a non\u2011expiring File URL for a staged file.",
-      "topic": "storage",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["storage"]
-    }
-  ],
-  "tasks_streams_dynamic_tables": [
-    {
-      "id": "SPC-205",
-      "question": "Victor\u2019s 5\u2011minute task didn't run for 30 minutes. Why?",
-      "options": [
-        "Warehouse was suspended (for user-managed tasks).",
-        "SQL had errors.",
-        "Task must be recreated every hour.",
-        "Task history expired."
+        "It is a special role automatically granted to all users and should be used sparingly for broadly shared, low-risk objects.",
+        "It is a system role used only by internal Snowflake services and cannot be granted to users.",
+        "It is equivalent to ACCOUNTADMIN but limited to a single database.",
+        "It is the only role that can create users and roles."
       ],
       "correct_index": 0,
-      "explanation": "User-managed tasks need running warehouses.",
-      "topic": "tasks_streams_dynamic_tables",
-      "difficulty": "medium",
+      "correct_indices": [],
+      "explanation": "PUBLIC is automatically granted to all users and is intended for minimal, low-risk privileges and shared objects. It should not be used for sensitive data or broad administrative access.",
+      "difficulty": "easy",
       "source_type": "mock",
-      "tags": ["tasks"]
+      "tags": ["public role", "rbac", "best practices"]
     },
     {
-      "id": "SPC-206",
-      "question": "When choose user\u2011managed tasks?",
+      "topic": "accounts_security",
+      "id": "SEC-009",
+      "question": "Your organization wants to centralize authentication with your corporate identity provider (IdP) and enable SSO into Snowflake. Which configuration is MOST appropriate?",
       "options": [
-        "For auto-suspend needs.",
-        "Tasks never need warehouses.",
-        "When predictable compute or long\u2011running tasks are required.",
-        "For external tables only."
-      ],
-      "correct_index": 2,
-      "explanation": "User-managed tasks give compute control.",
-      "topic": "tasks_streams_dynamic_tables",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["tasks"]
-    }
-  ],
-  "time_travel": [
-    {
-      "id": "SPC-216",
-      "question": "Which feature provides access to historical data?",
-      "options": [
-        "Search Optimization",
-        "Materialized Views",
-        "Fail-safe",
-        "Time Travel"
-      ],
-      "correct_index": 3,
-      "explanation": "Time Travel supports point\u2011in\u2011time restore.",
-      "topic": "time_travel",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["timetravel"]
-    },
-    {
-      "id": "SPC-217",
-      "question": "What happens when retention ends?",
-      "options": [
-        "Data moves to cold storage.",
-        "Tables are dropped.",
-        "Data remains for 7 days.",
-        "Historical data becomes unavailable."
-      ],
-      "correct_index": 3,
-      "explanation": "Expired Time Travel data is removed before Fail-safe.",
-      "topic": "time_travel",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["timetravel"]
-    }
-  ],
-  "virtual_warehouse_scaling": [
-    {
-      "id": "SPC-218",
-      "question": "What is a key benefit of multi\u2011cluster warehouse scaling?",
-      "options": [
-        "Eliminates credit consumption",
-        "Reduces storage cost",
-        "Improves single\u2011query runtime",
-        "Improves concurrency during workload spikes"
-      ],
-      "correct_index": 3,
-      "explanation": "Multi\u2011cluster scaling adds clusters to handle high concurrency.",
-      "topic": "virtual_warehouse_scaling",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["warehouse_scaling"]
-    },
-    {
-      "id": "SPC-219",
-      "question": "What happens when a multi\u2011cluster warehouse scales out?",
-      "options": [
-        "Time Travel retention increases",
-        "Warehouse size doubles automatically",
-        "Snowflake adds additional clusters to handle more concurrent queries",
-        "Queries are cancelled"
-      ],
-      "correct_index": 2,
-      "explanation": "Scaling out increases clusters, not node size.",
-      "topic": "virtual_warehouse_scaling",
-      "difficulty": "medium",
-      "source_type": "mock",
-      "tags": ["warehouse_scaling"]
-    }
-  ],
-  "warehouses": [
-    {
-      "id": "SPC-226",
-      "question": "The suspended warehouse cannot be resized until it resumes. (True/False)",
-      "options": [
-        "TRUE",
-        "FALSE",
-        "Only in Standard Edition.",
-        "Only for multi\u2011cluster warehouses."
+        "Configure key-pair authentication for all users instead of passwords",
+        "Configure federated authentication and SAML integration with the IdP",
+        "Use network policies to allow only IP addresses from the IdP",
+        "Create separate Snowflake accounts for each IdP group"
       ],
       "correct_index": 1,
-      "explanation": "You can alter size while suspended; it takes effect on resume.",
-      "topic": "warehouses",
+      "correct_indices": [],
+      "explanation": "Federated authentication using SAML/OIDC with an enterprise IdP enables SSO and centralized identity management for Snowflake users.",
       "difficulty": "medium",
       "source_type": "mock",
-      "tags": ["warehouses"]
+      "tags": ["sso", "federated auth", "saml", "idp"]
     },
     {
-      "id": "SPC-227",
-      "question": "What are the two modes for multi\u2011cluster warehouses?",
+      "topic": "accounts_security",
+      "id": "SEC-010",
+      "question": "A security officer needs to quickly identify failed login attempts and suspicious authentication patterns. Which Snowflake view is MOST useful for this purpose?",
       "options": [
-        "Maximized and Auto\u2011scale.",
-        "Standard and Economy.",
-        "Single\u2011cluster and Multi\u2011cluster.",
-        "Elastic and Fixed."
+        "SNOWFLAKE.ACCOUNT_USAGE.LOGIN_HISTORY",
+        "SNOWFLAKE.ACCOUNT_USAGE.OBJECT_DEPENDENCIES",
+        "INFORMATION_SCHEMA.TABLES",
+        "SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY"
       ],
       "correct_index": 0,
-      "explanation": "MIN=MAX => Maximized; MIN<MAX => Auto\u2011scale.",
-      "topic": "warehouses",
+      "correct_indices": [],
+      "explanation": "LOGIN_HISTORY provides information about successful and failed login attempts, IP addresses, and authentication methods, making it suitable for sign-in auditing.",
+      "difficulty": "easy",
+      "source_type": "mock",
+      "tags": ["login_history", "auditing", "security"]
+    },
+    {
+      "topic": "accounts_security",
+      "id": "SEC-011",
+      "question": "Which statements are TRUE about how Snowflake handles data encryption? (Select all that apply.)",
+      "options": [
+        "Snowflake automatically encrypts all data at rest using strong encryption by default.",
+        "Snowflake supports periodic rotation of encryption keys.",
+        "Users must manually encrypt all data before loading it into Snowflake because Snowflake never encrypts data.",
+        "Encryption can be disabled at the table level to improve performance."
+      ],
+      "correct_index": 0,
+      "correct_indices": [0, 1],
+      "explanation": "Snowflake automatically encrypts data at rest and in transit using strong encryption and supports regular key rotation. Encryption cannot be turned off at the table level.",
       "difficulty": "medium",
       "source_type": "mock",
-      "tags": ["warehouses"]
+      "tags": ["encryption", "security", "architecture", "multi-select"]
+    },
+    {
+      "topic": "accounts_security",
+      "id": "SEC-012",
+      "question": "A data platform team wants to ensure that only specific roles can modify role grants (e.g., grant or revoke privileges). Which role should they primarily rely on to manage these security-related grants?",
+      "options": ["SYSADMIN", "USERADMIN", "SECURITYADMIN", "PUBLIC"],
+      "correct_index": 2,
+      "correct_indices": [],
+      "explanation": "SECURITYADMIN is responsible for managing security-related objects and grants, including granting and revoking privileges and managing role hierarchies.",
+      "difficulty": "medium",
+      "source_type": "mock",
+      "tags": ["securityadmin", "grants", "rbac"]
+    },
+    {
+      "topic": "accounts_security",
+      "id": "SEC-013",
+      "question": "A Snowflake administrator wants to minimize risk when using the ACCOUNTADMIN role, following best practices. Which actions align with this goal? (Select all that apply.)",
+      "options": [
+        "Use ACCOUNTADMIN only for rare, account-level configuration tasks.",
+        "Create custom admin roles (for example, PLATFORM_ADMIN) for daily operations and grant them limited privileges.",
+        "Assign ACCOUNTADMIN to all developers so they can troubleshoot issues directly.",
+        "Use separate users or sessions when acting as ACCOUNTADMIN versus everyday work."
+      ],
+      "correct_index": 0,
+      "correct_indices": [0, 1, 3],
+      "explanation": "Best practices include limiting use of ACCOUNTADMIN to rare tasks, delegating daily work to custom roles with narrower privileges, and separating high-privilege sessions from normal activity.",
+      "difficulty": "hard",
+      "source_type": "mock",
+      "tags": ["accountadmin", "best practices", "security", "multi-select"]
     }
   ]
 }

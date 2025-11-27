@@ -21,6 +21,7 @@ The app supports topic-based practice, timed practice tests, explanations, scori
   - **Published Google Sheets CSV**
   - **Local JSON file** (fallback)
 - Topic-based filtering
+- **Multi-select answer** functionality
 - Randomized questions and answers
 - Explanations shown after answering
 - Tracks score during timed tests
@@ -88,7 +89,7 @@ The app works perfectly on any static hosting provider:
 ```js
 export const CONFIG = {
   googleSheetsCsvUrl: "https://docs.google.com/.../pub?output=csv",
-  TIME_LIMIT: 40,
+  TIME_LIMIT: 60,
   APP_VERSION: "v1.0.0",
 };
 ```

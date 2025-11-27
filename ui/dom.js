@@ -1,3 +1,4 @@
+// ui/dom.js
 export const dom = {
   dataSourceWarning: document.getElementById("dataSourceWarning"),
   dataSourceSelect: document.getElementById("dataSourceSelect"),
@@ -10,15 +11,16 @@ export const dom = {
   practiceControls: document.getElementById("practiceControls"),
   testControls: document.getElementById("testControls"),
 
-  // Timer container (NEW / IMPORTANT)
-  timerContainer: document.getElementById("timerContainer"),
-
+  // Question / options UI
   topicSelect: document.getElementById("topicSelect"),
   questionTitle: document.getElementById("questionTitle"),
   optionsContainer: document.getElementById("optionsContainer"),
   feedback: document.getElementById("feedback"),
   nextBtn: document.getElementById("nextBtn"),
   questionMeta: document.getElementById("questionMeta"),
+
+  // Timer
+  timerContainer: document.getElementById("timerContainer"),
   timerText: document.getElementById("timerText"),
   timerBar: document.getElementById("timerBar"),
 
