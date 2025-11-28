@@ -95,6 +95,12 @@ function recordTopicStat(question, isCorrect) {
 function showCurrentQuestion() {
   stopTimer();
 
+  // Ensure the Next button is visible whenever there *is* a question to show
+  if (dom.nextBtn) {
+    dom.nextBtn.classList.remove("d-none");
+    dom.nextBtn.disabled = false;
+  }
+
   if (!currentQuestions.length || currentIndex >= currentQuestions.length) {
     const baseMessage = isTestMode
       ? `Test complete. Score: ${correctCount}/${answeredCount || 1}.`
@@ -108,6 +114,11 @@ function showCurrentQuestion() {
       answeredCount,
       isTestMode,
     });
+
+    // Hide Next button when there is nothing else to go to
+    if (dom.nextBtn) {
+      dom.nextBtn.classList.add("d-none");
+    }
     return;
   }
 
@@ -198,6 +209,9 @@ export function loadTopic(topic) {
   if (!currentQuestions.length) {
     stopTimer();
     renderEmpty("No questions available for this topic.");
+    if (dom.nextBtn) {
+      dom.nextBtn.classList.add("d-none");
+    }
     return;
   }
 
@@ -220,6 +234,9 @@ export function startTest(size) {
   if (!currentQuestions.length) {
     stopTimer();
     renderEmpty("No questions available to build a test.");
+    if (dom.nextBtn) {
+      dom.nextBtn.classList.add("d-none");
+    }
     return;
   }
 
@@ -229,6 +246,9 @@ export function startTest(size) {
 export function nextQuestion() {
   if (!currentQuestions.length) {
     renderEmpty("No questions loaded.");
+    if (dom.nextBtn) {
+      dom.nextBtn.classList.add("d-none");
+    }
     return;
   }
 
@@ -248,5 +268,10 @@ export function nextQuestion() {
       answeredCount,
       isTestMode,
     });
+
+    // Hide Next button when user reaches the end via manual click
+    if (dom.nextBtn) {
+      dom.nextBtn.classList.add("d-none");
+    }
   }
 }
