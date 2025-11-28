@@ -183,9 +183,15 @@ body.dark-mode .form-check-input {
   border-color: #3a4552;
 }
 
+/* Dark mode – Snowflake blue */
 body.dark-mode .form-check-input:checked {
-  background-color: rgb(74, 126, 234);
-  border-color: rgb(74, 126, 234);
+  background-color: #4a7eea !important;
+  border-color: #4a7eea !important;
+}
+
+body.dark-mode .form-check-input:focus {
+  border-color: #4a7eea !important;
+  box-shadow: 0 0 0 0.2rem rgba(74, 126, 234, 0.45) !important;
 }
 
 /* -----------------------------------
@@ -251,4 +257,118 @@ body,
 .form-check-label {
   transition: background-color 0.45s ease, color 0.45s ease,
     border-color 0.45s ease;
+}
+
+/* Headings in dark mode */
+body.dark-mode h1,
+body.dark-mode h5,
+body.dark-mode .card-title {
+  color: rgb(190, 196, 211) !important;
+}
+
+/* Only strong text inside the session summary card
+   gets the special highlight color */
+body.dark-mode .session-summary-card strong {
+  color: rgb(190, 196, 211) !important;
+}
+
+/* General body text in dark mode */
+body.dark-mode,
+body.dark-mode p,
+body.dark-mode label,
+body.dark-mode .form-label,
+body.dark-mode .small,
+body.dark-mode .text-muted {
+  color: rgb(162, 171, 191) !important;
+}
+
+/* Base progress bar color (Snowflake blue) */
+.progress-bar {
+  background-color: rgb(74, 126, 234) !important;
+}
+
+/* Dark mode background for the progress track */
+body.dark-mode .progress {
+  background-color: #2a3240 !important;
+}
+
+body.dark-mode .progress-bar {
+  background-color: rgb(74, 126, 234) !important;
+}
+
+/* Light mode badges (Snowflake-ish) */
+.badge.bg-primary {
+  background-color: rgb(74, 126, 234) !important; /* Snowflake blue */
+  color: #f9fbff !important;
+}
+
+.badge.bg-info {
+  background-color: #e7efff !important; /* soft blue pill */
+  color: #2454b4 !important;
+}
+
+.badge.bg-secondary {
+  background-color: #e0e3ec !important; /* soft neutral */
+  color: #2d3748 !important;
+}
+
+/* Dark mode badges */
+body.dark-mode .badge.bg-primary {
+  background-color: rgb(74, 126, 234) !important;
+  color: #f9fbff !important;
+}
+
+body.dark-mode .badge.bg-info {
+  background-color: #2a3246 !important; /* dark blue-grey pill */
+  color: #d5def5 !important;
+}
+
+body.dark-mode .badge.bg-secondary {
+  background-color: #3a4256 !important; /* neutral dark for secondary info */
+  color: #d5def5 !important;
+}
+
+body.dark-mode .list-group-item {
+  background-color: transparent !important;
+  border-color: #2f3545 !important;
+}
+
+/* Use Snowflake blue for radio/checkbox accent in all modes */
+.form-check-input {
+  accent-color: #4a7eea; /* rgb(74, 126, 234) */
+}
+
+/* Light mode focus ring */
+.form-check-input:focus {
+  border-color: #4a7eea !important;
+  box-shadow: 0 0 0 0.2rem rgba(74, 126, 234, 0.35) !important;
+}
+
+/* Dark mode focus ring */
+body.dark-mode .form-check-input:focus {
+  border-color: #4a7eea !important;
+  box-shadow: 0 0 0 0.2rem rgba(74, 126, 234, 0.45) !important;
+}
+
+/* -----------------------------------
+   Bootstrap radio styling → Snowflake blue
+----------------------------------- */
+
+/* Global (light + dark) */
+:root {
+  --bs-form-check-input-checked-bg-color: #4a7eea;
+  --bs-form-check-input-checked-border-color: #4a7eea;
+  --bs-form-check-input-focus-border: #4a7eea;
+  --bs-form-check-input-focus-box-shadow: 0 0 0 0.2rem rgba(74, 126, 234, 0.35);
+}
+
+/* Just to be extra explicit for the radio inputs */
+.form-check-input:checked {
+  background-color: var(--bs-form-check-input-checked-bg-color) !important;
+  border-color: var(--bs-form-check-input-checked-border-color) !important;
+}
+
+.form-check-input:focus {
+  border-color: var(--bs-form-check-input-focus-border) !important;
+  box-shadow: var(--bs-form-check-input-focus-box-shadow) !important;
 }
