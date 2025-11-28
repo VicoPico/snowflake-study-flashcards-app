@@ -159,3 +159,82 @@ export function renderFeedback(
     </div>
   `;
 }
+
+// NEW: visually nice per-topic summary
+export function renderSessionSummary({
+  perTopicStats,
+  correctCount,
+  answeredCount,
+  isTestMode,
+}) {
+  if (!dom.feedback) return;
+
+  const totalAnswered = answeredCount || 0;
+  const overallPct =
+    totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0;
+
+  const entries = Object.entries(perTopicStats || {});
+  if (!entries.length && totalAnswered === 0) {
+    return; // nothing to show
+  }
+
+  const topicRows = entries
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([topic, stats]) => {
+      const pct =
+        stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+
+      return `
+        <div class="list-group-item bg-transparent px-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <strong>${topic}</strong>
+            <span class="badge bg-secondary">${pct}%</span>
+          </div>
+          <div class="small text-muted mb-1">
+            ${stats.correct} / ${stats.total} correct
+          </div>
+          <div class="progress" style="height: 4px;">
+            <div
+              class="progress-bar"
+              role="progressbar"
+              style="width: ${pct}%;"
+              aria-valuenow="${pct}"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            ></div>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+
+  const modeLabel = isTestMode ? "Timed practice test" : "Practice session";
+
+  dom.feedback.innerHTML = `
+    <div class="card mt-3 shadow-sm session-summary-card">
+      <div class="card-body">
+        <h6 class="card-title mb-1">Session summary</h6>
+        <p class="small text-muted mb-2">${modeLabel}</p>
+
+        <div class="mb-3">
+          <span class="badge bg-primary me-2">
+            Overall: ${correctCount}/${totalAnswered || 0}
+          </span>
+          <span class="badge bg-info text-dark">
+            ${overallPct}% correct
+          </span>
+        </div>
+
+        ${
+          topicRows
+            ? `
+          <div class="list-group list-group-flush small">
+            ${topicRows}
+          </div>
+        `
+            : `<p class="small text-muted mb-0">No topic-level stats available.</p>`
+        }
+      </div>
+    </div>
+  `;
+}

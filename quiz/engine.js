@@ -7,6 +7,7 @@ import {
   renderFeedback,
   renderEmpty,
   renderMeta,
+  renderSessionSummary, // NEW
 } from "../ui/render.js";
 
 let currentQuestions = [];
@@ -14,6 +15,9 @@ let currentIndex = 0;
 let isTestMode = false;
 let correctCount = 0;
 let answeredCount = 0;
+
+// Per-topic stats { [topic]: { correct, total } }
+let perTopicStats = {};
 
 // Simple Fisher–Yates shuffle
 function shuffle(array) {
@@ -76,15 +80,34 @@ function evaluateQuestion(question, selectedIndices) {
   }
 }
 
+// Update per-topic stats after each question
+function recordTopicStat(question, isCorrect) {
+  const topic = question.topic || "Unknown";
+  if (!perTopicStats[topic]) {
+    perTopicStats[topic] = { correct: 0, total: 0 };
+  }
+  perTopicStats[topic].total += 1;
+  if (isCorrect) {
+    perTopicStats[topic].correct += 1;
+  }
+}
+
 function showCurrentQuestion() {
   stopTimer();
 
   if (!currentQuestions.length || currentIndex >= currentQuestions.length) {
-    renderEmpty(
-      isTestMode
-        ? `Test complete. Score: ${correctCount}/${answeredCount || 1}.`
-        : "You have reached the end of the available questions."
-    );
+    const baseMessage = isTestMode
+      ? `Test complete. Score: ${correctCount}/${answeredCount || 1}.`
+      : "You have reached the end of the available questions.";
+
+    renderEmpty(baseMessage);
+    // Nice-looking card with per-topic breakdown
+    renderSessionSummary({
+      perTopicStats,
+      correctCount,
+      answeredCount,
+      isTestMode,
+    });
     return;
   }
 
@@ -112,6 +135,7 @@ function showCurrentQuestion() {
     if (isCorrect) {
       correctCount++;
     }
+    recordTopicStat(q, isCorrect);
 
     renderFeedback(q, {
       selectedIndices,
@@ -169,6 +193,7 @@ export function loadTopic(topic) {
   isTestMode = false;
   correctCount = 0;
   answeredCount = 0;
+  perTopicStats = {}; // reset per-topic stats
 
   if (!currentQuestions.length) {
     stopTimer();
@@ -190,6 +215,7 @@ export function startTest(size) {
   isTestMode = true;
   correctCount = 0;
   answeredCount = 0;
+  perTopicStats = {}; // reset per-topic stats
 
   if (!currentQuestions.length) {
     stopTimer();
@@ -211,10 +237,16 @@ export function nextQuestion() {
     showCurrentQuestion();
   } else {
     stopTimer();
-    renderEmpty(
-      isTestMode
-        ? `Test complete. Score: ${correctCount}/${answeredCount || 1}.`
-        : "You have reached the end of the available questions."
-    );
+    const baseMessage = isTestMode
+      ? `Test complete. Score: ${correctCount}/${answeredCount || 1}.`
+      : "You have reached the end of the available questions.";
+
+    renderEmpty(baseMessage);
+    renderSessionSummary({
+      perTopicStats,
+      correctCount,
+      answeredCount,
+      isTestMode,
+    });
   }
 }

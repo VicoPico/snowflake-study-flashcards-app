@@ -13,7 +13,7 @@ The app supports topic-based practice, timed practice tests, explanations, scori
 
 - **Two study modes**
   - **Practice by topic**
-  - **Timed practice test** (25, 50, 75, or 100 random questions)
+  - **Timed practice test** (10, 25, 50 or 100 random questions)
 - **Timer functionality**
   - Progress bar + countdown
   - Timeout automatically moves the quiz forward
