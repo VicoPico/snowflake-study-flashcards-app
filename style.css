@@ -372,3 +372,8 @@ body.dark-mode .form-check-input:focus {
   border-color: var(--bs-form-check-input-focus-border) !important;
   box-shadow: var(--bs-form-check-input-focus-box-shadow) !important;
 }
+
+/* Add space between “Mode” label and the first radio button */
+.mode-block .form-check-inline:first-of-type {
+  margin-left: 16px; /* adjust to taste: 12–20px works well */
+}
