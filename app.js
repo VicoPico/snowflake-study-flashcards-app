@@ -7,6 +7,22 @@ import { loadFromJson, loadFromGoogleSheets } from "./data/loaders.js";
 import { dom } from "./ui/dom.js";
 import { renderEmpty } from "./ui/render.js";
 
+// -----------------------------
+// Helper: Next button visibility
+// -----------------------------
+function setNextButtonVisible(flag) {
+  if (!dom.nextBtn) return;
+  if (flag) {
+    dom.nextBtn.classList.remove("d-none");
+    dom.nextBtn.disabled = false;
+  } else {
+    dom.nextBtn.classList.add("d-none");
+  }
+}
+
+// -----------------------------
+// Dark mode initialization
+// -----------------------------
 function initDarkMode() {
   const btn = document.getElementById("darkModeToggle");
   const icon = document.getElementById("darkModeIcon");
@@ -46,6 +62,9 @@ function initDarkMode() {
   });
 }
 
+// -----------------------------
+// Data loading
+// -----------------------------
 async function loadDataBySource(source) {
   clearWarning();
 
@@ -89,6 +108,9 @@ async function loadDataBySource(source) {
   }
 }
 
+// -----------------------------
+// App initialization
+// -----------------------------
 function init() {
   // Initialize dark mode toggle
   initDarkMode();
@@ -98,6 +120,9 @@ function init() {
   if (versionEl) {
     versionEl.textContent = APP_VERSION;
   }
+
+  // Hide "Next question" by default until a mode actually starts
+  setNextButtonVisible(false);
 
   console.log("SnowPro App Version:", APP_VERSION);
   console.log("Google Sheets URL:", CONFIG.googleSheetsCsvUrl);
@@ -138,9 +163,12 @@ function init() {
       startTest(size);
     },
 
-    // Mode change: decide behavior per mode (but do not touch the timer UI)
+    // Mode change: decide behavior per mode
     onModeChange: (mode) => {
       if (mode === "practice") {
+        // Show Next button in practice mode
+        setNextButtonVisible(true);
+
         // Make sure timer is visible in practice mode
         if (dom.timerContainer) {
           dom.timerContainer.classList.remove("d-none");
@@ -148,12 +176,18 @@ function init() {
         // Start practice immediately (all topics by default)
         loadTopic("all");
       } else if (mode === "test") {
+        // Hide Next button until the test actually starts
+        setNextButtonVisible(false);
+
         // Hide timer until user clicks "Start test"
         if (dom.timerContainer) {
           dom.timerContainer.classList.add("d-none");
         }
         // Clear question area and wait for Start test
         renderEmpty('Select a test size and click "Start test" to begin.');
+      } else {
+        // No mode (safety fallback)
+        setNextButtonVisible(false);
       }
     },
   });
