@@ -125,10 +125,32 @@ body.dark-mode h1 {
   font-size: 40px;
 }
 
+body.dark-mode h2 {
+  color: rgb(190, 196, 211) !important; /* Title color */
+  font-weight: 500;
+  font-size: 36px;
+}
+
+body.dark-mode h6 {
+  color: rgb(190, 196, 211) !important; /* Title color */
+  font-weight: 400;
+  font-size: 18px;
+}
+
 /* Title styling (Light + Dark mode) */
 h1 {
   font-weight: 700;
-  font-size: 40px;
+  font-size: 36px;
+}
+
+h2 {
+  font-weight: 500;
+  font-size: 36px;
+}
+
+h6 {
+  font-weight: 400;
+  font-size: 18px;
 }
 
 body.dark-mode h5,

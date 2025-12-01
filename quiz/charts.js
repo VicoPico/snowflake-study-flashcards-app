@@ -4,9 +4,9 @@ let barChart = null;
 let donutChart = null;
 
 // Snowflake-ish palette
-const COLOR_PRIMARY = "#4a7eea"; // Snowflake blue
+const COLOR_PRIMARY = "#4a7eea"; // main Snowflake blue
 const COLOR_PRIMARY_LIGHT = "rgba(74, 126, 234, 0.25)";
-const COLOR_ACCENT = "#ff9f40"; // nice contrast orange
+const COLOR_ACCENT = "#ff9f40"; // contrast orange
 const COLOR_ACCENT_LIGHT = "rgba(255, 159, 64, 0.25)";
 const COLOR_GRID_LIGHT = "#e1e6ef";
 const COLOR_GRID_DARK = "#3a4050";
@@ -79,8 +79,9 @@ export function renderTopicCharts(perTopicStats) {
     labels.push(topic);
     if (total > 0) {
       const pct = (corr / total) * 100;
-      correctPct.push(Math.round(pct));
-      incorrectPct.push(Math.max(0, 100 - Math.round(pct)));
+      const rounded = Math.round(pct);
+      correctPct.push(rounded);
+      incorrectPct.push(Math.max(0, 100 - rounded));
     } else {
       correctPct.push(0);
       incorrectPct.push(0);
@@ -102,23 +103,24 @@ export function renderTopicCharts(perTopicStats) {
   dom.scoreCharts.innerHTML = `
     <div class="card shadow-sm score-charts-card">
       <div class="card-body">
-        <h6 class="card-title mb-2 text-center">Performance by topic</h6>
+        <h3 class="card-title mb-2 text-center">Accuracy by Topic</h3>
+        <div class="chart-wrapper mb-4">
         <p class="small text-muted mb-3 text-center">
-          Correct vs incorrect per topic, plus overall correctness.
+          Performance Summary for each topic (correct vs incorrect answers)
         </p>
 
         <div class="score-charts-row">
           <div class="chart-wrapper">
-            <p class="small text-muted text-center mb-1">
-              Correct vs incorrect (% per topic)
-            </p>
+            <h6 class="small text-muted text-center mb-1">
+              Accuracy by Topic (in %)
+            </h6>
             <canvas id="topicBarChart"></canvas>
           </div>
 
-          <div class="chart-wrapper">
-            <p class="small text-muted text-center mb-1">
-              Overall correctness
-            </p>
+          <div class="chart-wrapper mb-4">
+            <h6 class="small text-muted text-center mb-1">
+              Overall Accuracy
+            </h6>
             <canvas id="topicDonutChart"></canvas>
           </div>
         </div>
@@ -144,7 +146,9 @@ export function renderTopicCharts(perTopicStats) {
   const gridColor = isDark ? COLOR_GRID_DARK : COLOR_GRID_LIGHT;
   const tickColor = isDark ? "#a2abbf" : "#495057";
 
-  // ---- Bar chart: correct vs incorrect % per topic ----
+  const tooManyLabels = labels.length > 6 || window.innerWidth < 900;
+
+  // ---- Stacked bar chart: correct vs incorrect % per topic ----
   barChart = new Chart(barCtx, {
     type: "bar",
     data: {
@@ -173,15 +177,19 @@ export function renderTopicCharts(perTopicStats) {
       maintainAspectRatio: false,
       scales: {
         x: {
-          stacked: false,
+          stacked: true,
           ticks: {
             color: tickColor,
             autoSkip: false,
             maxRotation: 0,
             minRotation: 0,
-            callback: function (value) {
+            callback: function (value, index) {
               const label = this.getLabelForValue(value);
-              return splitLabelForChart(label);
+              const base = splitLabelForChart(label);
+
+              // On crowded charts, hide every other label to reduce overlap
+              if (!tooManyLabels) return base;
+              return index % 2 === 0 ? base : "";
             },
           },
           grid: {
@@ -189,7 +197,7 @@ export function renderTopicCharts(perTopicStats) {
           },
         },
         y: {
-          stacked: false,
+          stacked: true,
           beginAtZero: true,
           max: 100,
           ticks: {
@@ -228,7 +236,8 @@ export function renderTopicCharts(perTopicStats) {
       datasets: [
         {
           data: [overallPct, overallIncorrect],
-          backgroundColor: [COLOR_PRIMARY, COLOR_ACCENT_LIGHT],
+          // Use the same Snowflake blue as the bar chart for "Correct"
+          backgroundColor: [COLOR_PRIMARY_LIGHT, COLOR_ACCENT_LIGHT],
           borderColor: [COLOR_PRIMARY, COLOR_ACCENT],
           borderWidth: 1,
         },
@@ -237,7 +246,7 @@ export function renderTopicCharts(perTopicStats) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      cutout: "65%", // smaller, tighter donut
+      cutout: "60%", // Donut ring thickness
       plugins: {
         legend: {
           position: "bottom",
