@@ -1,107 +1,100 @@
 # ❄️ SnowPro Core Quiz App
 
-**Live Application:** https://vicopico.github.io/snowflake-study-flashcards-app/
+Live Application: https://vicopico.github.io/snowflake-study-flashcards-app/
 
-A simple and lightweight web-based quiz application for studying the **SnowPro Core Certification**.
-Built using HTML, Bootstrap, and modular Vanilla JavaScript, with questions loaded from either a public Google Sheets CSV or a local `questions.json` fallback.
+A modern, lightweight web-based quiz application for studying the SnowPro Core Certification.
+Fully client-side, fast, and designed to make Snowflake exam preparation enjoyable and efficient.
 
-The app supports topic-based practice, timed practice tests, explanations, scoring, and a clean UI suitable for individuals or teams preparing for certification.
+Built with Vanilla JavaScript, Bootstrap 5, and optional integration with a shared Google Sheets question bank..
 
 ---
 
 ## Features
 
-- **Two study modes**
-  - **Practice by topic**
-  - **Timed practice test** (10, 25, 50 or 100 random questions)
-- **Timer functionality**
-  - Progress bar + countdown
-  - Timeout automatically moves the quiz forward
-- Load questions from:
-  - **Published Google Sheets CSV**
-  - **Local JSON file** (fallback)
-- Topic-based filtering
-- **Multi-select answer** functionality
-- Randomized questions and answers
-- Explanations shown after answering
-- Tracks score during timed tests
-- Lightweight, dependency-free, fully client-side
-- Works seamlessly on GitHub Pages, Netlify, Vercel, or any static host
-- Easy to extend with new topics or updated questions
-- Version badge automatically displayed in the UI
-- Optional Dark Mode (toggle in header, remembers your preference)
+#### Study Modes
 
----
+- Practice by topic
+- Timed practice tests (10, 25, 50, or 100 randomized questions)
 
-## Project Structure
+#### Smart Feedback & Scoring
 
-```
-.
-├── index.html
-├── style.css              # Light mode base styles
-├── dark.css               # Dark mode override styles (loaded dynamically)
-├── app.js                 # App bootstrap (module)
-├── config.js              # Settings (Google Sheets URL, time limit, version)
-├── state.js               # Global quiz/test state
-├── LICENSE
-├── readme.md
-├── questions.json         # Local fallback question set
-├── data/
-│   ├── parsers.js         # CSV → question objects
-│   └── loaders.js         # Sheets + JSON loading handlers
-├── ui/
-│   ├── dom.js             # Central DOM lookup
-│   ├── warnings.js        # Data source warnings
-│   ├── render.js          # Rendering helpers
-│   └── events.js          # UI event binding (topic select, mode select, test start, etc.)
-└── quiz/
-    ├── engine.js          # Question flow, scoring, topic/test logic
-    └── timer.js           # Timer countdown + bar rendering
+- Immediate explanations after each question
+- Supports single-choice and multi-select question types
+- Clean navigation flow
 
-```
+#### Performance Analytics
+
+After each session, the app displays:
+
+- Per-topic accuracy
+- Total questions answered per topic
+- Overall accuracy (donut chart)
+- A clean and consistent summary card aligned with Snowflake’s design
+- Fully responsive Chart.js visualizations
+
+#### Visual Design
+
+- Snowflake-inspired color palette
+- Light and dark mode, with automatic dark-mode preference detection
+- Custom styles for:
+  - Progress bars
+  - Mode selectors
+  - Topic result badges
+  - Charts
+
+#### Data Loading Options
+
+- Load questions from a published Google Sheets CSV
+- Automatic fallback to a local questions.json file
+- Clear warnings displayed if Sheets loading fails
+
+#### Developer-Friendly
+
+- Modular, readable JavaScript modules
+- No build tools required
+- Works on any static hosting environment
+- Easy to extend with additional questions or topics
 
 ---
 
 ## How to Run
 
-Simply open **`index.html`** in your browser — no server required.
+Simply open `index.html` in your browser.
 
-### Hosting
-
-The app works perfectly on any static hosting provider:
+This project runs correctly on:
 
 - GitHub Pages
 - Netlify
 - Vercel
 - Cloudflare Pages
-- Local file system
+- A local file system (file://)
 
----
+No server or build process is required.
 
-## Using a Google Sheets Question Bank
+⸻
 
-1. Prepare your question set in Google Sheets
-2. Publish the sheet:  
-   **File → Share → Publish to the web → CSV**
-3. Copy the generated CSV URL
-4. Paste it into `config.js`:
+Using a Google Sheets Question Bank
+
+1. Create your question set in Google Sheets.
+2. Publish it as CSV:
+   File → Share → Publish to the web → CSV
+3. Copy the published link.
+4. Add it to config.js:
 
 ```js
 export const CONFIG = {
   googleSheetsCsvUrl: "https://docs.google.com/.../pub?output=csv",
   TIME_LIMIT: 60,
-  APP_VERSION: "v1.0.0",
+  APP_VERSION: "v1.x.x",
 };
 ```
 
-> **Note about the Google Sheets URL**  
-> The URL for the public Google Sheets question bank is intentionally **hard-coded** in `config.js`.  
-> This guarantees that everyone using the app pulls from the same shared, curated set of Snowflake questions.
->
-> The community is encouraged to **contribute new questions, corrections, or improvements** by updating the shared Google Sheet or submitting pull requests.  
-> The goal is to keep the content extremely reliable while continuously expanding the coverage of Snowflake topics.
+---
 
-If the sheet cannot be loaded, the app automatically falls back to questions.json.
+## Notes
+
+- The published Google Sheets URL is intentionally stored directly in config.js to provide a shared, authoritative question source.
+- If loading the sheet fails, the app automatically falls back to the bundled questions.json.
 
 ---
 
@@ -115,3 +108,9 @@ See [LICENSE](LICENSE) file for details.
 ## Contributing
 
 Feel free to fork the project, open issues, or submit pull requests.
+
+You can participate by:
+
+- Updating the shared Google Sheet
+- Opening issues
+- Submitting pull requests
