@@ -8,4 +8,4 @@ export const PASTE_PLACEHOLDER = "PASTE_YOUR_URL_TO_GOOGLE_SHEETS_HERE";
 export const TIME_LIMIT = 60;
 
 // NEW: app version
-export const APP_VERSION = "v1.5.1";
+export const APP_VERSION = "v1.5.2";
