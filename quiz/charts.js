@@ -1,3 +1,4 @@
+// quiz/charts.js
 import { dom } from "../ui/dom.js";
 
 let barChart = null;
@@ -104,9 +105,8 @@ export function renderTopicCharts(perTopicStats) {
     <div class="card shadow-sm score-charts-card">
       <div class="card-body">
         <h3 class="card-title mb-2 text-center">Accuracy by Topic</h3>
-        <div class="chart-wrapper mb-4">
         <p class="small text-muted mb-3 text-center">
-          Performance Summary for each topic (correct vs incorrect answers)
+          Topic performance and overall score.
         </p>
 
         <div class="score-charts-row">
@@ -117,9 +117,9 @@ export function renderTopicCharts(perTopicStats) {
             <canvas id="topicBarChart"></canvas>
           </div>
 
-          <div class="chart-wrapper mb-4">
+          <div class="chart-wrapper">
             <h6 class="small text-muted text-center mb-1">
-              Overall Accuracy
+              Overall Score
             </h6>
             <canvas id="topicDonutChart"></canvas>
           </div>
@@ -175,6 +175,9 @@ export function renderTopicCharts(perTopicStats) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: {
+        padding: { bottom: 24 }, // a bit of room for bottom legend
+      },
       scales: {
         x: {
           stacked: true,
@@ -228,7 +231,7 @@ export function renderTopicCharts(perTopicStats) {
     },
   });
 
-  // ---- Donut chart: overall correctness ----
+  // ---- Donut chart: overall score ----
   donutChart = new Chart(donutCtx, {
     type: "doughnut",
     data: {
@@ -236,7 +239,7 @@ export function renderTopicCharts(perTopicStats) {
       datasets: [
         {
           data: [overallPct, overallIncorrect],
-          // Use the same Snowflake blue as the bar chart for "Correct"
+          // Use same Snowflake blue as bar chart for "Correct"
           backgroundColor: [COLOR_PRIMARY_LIGHT, COLOR_ACCENT_LIGHT],
           borderColor: [COLOR_PRIMARY, COLOR_ACCENT],
           borderWidth: 1,
@@ -246,7 +249,7 @@ export function renderTopicCharts(perTopicStats) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      cutout: "60%", // Donut ring thickness
+      cutout: "60%",
       plugins: {
         legend: {
           position: "bottom",
@@ -264,4 +267,20 @@ export function renderTopicCharts(perTopicStats) {
       },
     },
   });
+}
+
+// Clear charts (used when starting a new session or switching mode)
+export function clearTopicCharts() {
+  if (barChart) {
+    barChart.destroy();
+    barChart = null;
+  }
+  if (donutChart) {
+    donutChart.destroy();
+    donutChart = null;
+  }
+
+  if (dom.scoreCharts) {
+    dom.scoreCharts.innerHTML = "";
+  }
 }
