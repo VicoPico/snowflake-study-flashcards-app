@@ -1,5 +1,6 @@
 // ui/render.js
 import { dom } from "./dom.js";
+import { renderTopicCharts } from "../quiz/charts.js";
 
 export function renderEmpty(message) {
   if (dom.questionTitle) dom.questionTitle.textContent = message;
@@ -237,4 +238,5 @@ export function renderSessionSummary({
       </div>
     </div>
   `;
+  renderTopicCharts(perTopicStats);
 }
