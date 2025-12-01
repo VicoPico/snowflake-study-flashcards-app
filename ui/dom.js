@@ -27,4 +27,7 @@ export const dom = {
   // Test size controls
   testSizeSelect: document.getElementById("testSizeSelect"),
   startTestBtn: document.getElementById("startTestBtn"),
+
+  // Charts container
+  scoreCharts: document.getElementById("scoreCharts"),
 };
