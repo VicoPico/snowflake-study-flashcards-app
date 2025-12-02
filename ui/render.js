@@ -1,4 +1,3 @@
-// ui/render.js
 import { dom } from "./dom.js";
 import { renderTopicCharts } from "../quiz/charts.js";
 
@@ -167,6 +166,7 @@ export function renderSessionSummary({
   correctCount,
   answeredCount,
   isTestMode,
+  isMockExam,
 }) {
   if (!dom.feedback) return;
 
@@ -188,7 +188,7 @@ export function renderSessionSummary({
       return `
         <div class="list-group-item bg-transparent px-0">
           <div class="d-flex justify-content-between align-items-center">
-            <strong>${topic}</strong>
+            <strong class="session-topic-label">${topic}</strong>
             <span class="badge bg-secondary">${pct}%</span>
           </div>
           <div class="small text-muted mb-1">
@@ -209,7 +209,11 @@ export function renderSessionSummary({
     })
     .join("");
 
-  const modeLabel = isTestMode ? "Timed practice test" : "Practice session";
+  const modeLabel = isTestMode
+    ? isMockExam
+      ? "Mock exam"
+      : "Timed practice test"
+    : "Practice session";
 
   dom.feedback.innerHTML = `
     <div class="card mt-3 shadow-sm session-summary-card">
@@ -238,5 +242,7 @@ export function renderSessionSummary({
       </div>
     </div>
   `;
+
+  // Keep your Chart.js call
   renderTopicCharts(perTopicStats);
 }

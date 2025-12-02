@@ -103,7 +103,7 @@ export function renderTopicCharts(perTopicStats) {
   // Build chart card HTML
   dom.scoreCharts.innerHTML = `
     <div class="card shadow-sm score-charts-card">
-      <div class="card-body">
+      <div class="card-body pb-4">
         <h3 class="card-title mb-2 text-center">Accuracy by Topic</h3>
         <p class="small text-muted mb-3 text-center">
           Topic performance and overall score.

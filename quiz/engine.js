@@ -1,4 +1,3 @@
-// quiz/engine.js
 import { getQuestionsByTopic } from "../state.js";
 import { dom } from "../ui/dom.js";
 import { startTimer, stopTimer } from "./timer.js";
@@ -7,12 +6,18 @@ import {
   renderFeedback,
   renderEmpty,
   renderMeta,
-  renderSessionSummary, // NEW
+  renderSessionSummary,
 } from "../ui/render.js";
 
+// Internal state
 let currentQuestions = [];
 let currentIndex = 0;
-let isTestMode = false;
+
+// Mode flags
+// "test-like" means either Timed practice test OR Mock exam
+let isTestLike = false;
+let isMockExam = false;
+
 let correctCount = 0;
 let answeredCount = 0;
 
@@ -31,7 +36,7 @@ function shuffle(array) {
 function normalizeQuestion(raw) {
   const q = { ...raw };
 
-  // Normalize correct_index
+  // Normalize correct_index (single-answer)
   if (typeof q.correct_index === "string") {
     const ci = parseInt(q.correct_index, 10);
     q.correct_index = isNaN(ci) ? 0 : ci;
@@ -80,7 +85,7 @@ function evaluateQuestion(question, selectedIndices) {
   }
 }
 
-// Update per-topic stats after each question
+// Per-topic stats update
 function recordTopicStat(question, isCorrect) {
   const topic = question.topic || "Unknown";
   if (!perTopicStats[topic]) {
@@ -92,33 +97,31 @@ function recordTopicStat(question, isCorrect) {
   }
 }
 
+function endOfSession() {
+  const baseMessage = isTestLike
+    ? `Test complete. Score: ${correctCount}/${answeredCount || 1}.`
+    : "You have reached the end of the available questions.";
+
+  renderEmpty(baseMessage);
+
+  renderSessionSummary({
+    perTopicStats,
+    correctCount,
+    answeredCount,
+    isTestMode: isTestLike,
+    isMockExam,
+  });
+
+  if (dom.nextBtn) {
+    dom.nextBtn.classList.add("d-none");
+  }
+}
+
 function showCurrentQuestion() {
   stopTimer();
 
-  // Ensure the Next button is visible whenever there *is* a question to show
-  if (dom.nextBtn) {
-    dom.nextBtn.classList.remove("d-none");
-    dom.nextBtn.disabled = false;
-  }
-
   if (!currentQuestions.length || currentIndex >= currentQuestions.length) {
-    const baseMessage = isTestMode
-      ? `Test complete. Score: ${correctCount}/${answeredCount || 1}.`
-      : "You have reached the end of the available questions.";
-
-    renderEmpty(baseMessage);
-    // Nice-looking card with per-topic breakdown
-    renderSessionSummary({
-      perTopicStats,
-      correctCount,
-      answeredCount,
-      isTestMode,
-    });
-
-    // Hide Next button when there is nothing else to go to
-    if (dom.nextBtn) {
-      dom.nextBtn.classList.add("d-none");
-    }
+    endOfSession();
     return;
   }
 
@@ -128,10 +131,15 @@ function showCurrentQuestion() {
   renderMeta(q, {
     index: currentIndex + 1,
     total: currentQuestions.length,
-    isTestMode,
+    isTestMode: isTestLike,
     correctCount,
     answeredCount,
   });
+
+  // We are in the middle of a session: ensure Next button is visible
+  if (dom.nextBtn) {
+    dom.nextBtn.classList.remove("d-none");
+  }
 
   let answered = false;
 
@@ -201,42 +209,63 @@ export function loadTopic(topic) {
 
   currentQuestions = arr;
   currentIndex = 0;
-  isTestMode = false;
+
+  // Practice mode flags
+  isTestLike = false;
+  isMockExam = false;
   correctCount = 0;
   answeredCount = 0;
-  perTopicStats = {}; // reset per-topic stats
+  perTopicStats = {};
 
   if (!currentQuestions.length) {
     stopTimer();
     renderEmpty("No questions available for this topic.");
-    if (dom.nextBtn) {
-      dom.nextBtn.classList.add("d-none");
-    }
+    if (dom.nextBtn) dom.nextBtn.classList.add("d-none");
     return;
   }
 
   showCurrentQuestion();
 }
 
-// Test mode: build a fixed-size random test
-export function startTest(size) {
-  const qbt = getQuestionsByTopic();
-  const pool = shuffle(Object.values(qbt).flat());
+// Test mode: build a fixed-size random test (timed or mock)
+export function startTest(size, options = {}) {
+  const { mode = "test" } = options;
 
+  const qbt = getQuestionsByTopic();
+
+  let poolArray = [];
+  if (mode === "mock") {
+    // Prefer topics that look like mock exam topics (e.g. "Mock Exam 1")
+    for (const [topic, questions] of Object.entries(qbt)) {
+      if (topic.toLowerCase().startsWith("mock")) {
+        poolArray = poolArray.concat(questions);
+      }
+    }
+    // If none found yet, gracefully fall back to all questions
+    if (!poolArray.length) {
+      poolArray = Object.values(qbt).flat();
+    }
+  } else {
+    // Normal timed test: use all questions
+    poolArray = Object.values(qbt).flat();
+  }
+
+  const pool = shuffle(poolArray.slice());
   const actualSize = Math.min(size, pool.length);
+
   currentQuestions = pool.slice(0, actualSize);
   currentIndex = 0;
-  isTestMode = true;
+
+  isTestLike = true;
+  isMockExam = mode === "mock";
   correctCount = 0;
   answeredCount = 0;
-  perTopicStats = {}; // reset per-topic stats
+  perTopicStats = {};
 
   if (!currentQuestions.length) {
     stopTimer();
     renderEmpty("No questions available to build a test.");
-    if (dom.nextBtn) {
-      dom.nextBtn.classList.add("d-none");
-    }
+    if (dom.nextBtn) dom.nextBtn.classList.add("d-none");
     return;
   }
 
@@ -246,9 +275,7 @@ export function startTest(size) {
 export function nextQuestion() {
   if (!currentQuestions.length) {
     renderEmpty("No questions loaded.");
-    if (dom.nextBtn) {
-      dom.nextBtn.classList.add("d-none");
-    }
+    if (dom.nextBtn) dom.nextBtn.classList.add("d-none");
     return;
   }
 
@@ -257,21 +284,6 @@ export function nextQuestion() {
     showCurrentQuestion();
   } else {
     stopTimer();
-    const baseMessage = isTestMode
-      ? `Test complete. Score: ${correctCount}/${answeredCount || 1}.`
-      : "You have reached the end of the available questions.";
-
-    renderEmpty(baseMessage);
-    renderSessionSummary({
-      perTopicStats,
-      correctCount,
-      answeredCount,
-      isTestMode,
-    });
-
-    // Hide Next button when user reaches the end via manual click
-    if (dom.nextBtn) {
-      dom.nextBtn.classList.add("d-none");
-    }
+    endOfSession();
   }
 }
