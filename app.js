@@ -16,6 +16,35 @@ import { clearTopicCharts } from "./quiz/charts.js";
 
 let currentMode = null; // "practice" | "test" | "mock" | null
 
+// Test size presets for different modes
+const TEST_SIZES_STANDARD = [
+  { value: "", label: "Select test size…" },
+  { value: "10", label: "10 questions" },
+  { value: "25", label: "25 questions" },
+  { value: "50", label: "50 questions" },
+  { value: "100", label: "100 questions" },
+];
+
+const TEST_SIZES_MOCK = [
+  { value: "", label: "Select exam size…" },
+  { value: "50", label: "50 questions" },
+  { value: "100", label: "100 questions" },
+];
+
+function setTestSizeOptions(mode = "test") {
+  if (!dom.testSizeSelect) return;
+
+  const config = mode === "mock" ? TEST_SIZES_MOCK : TEST_SIZES_STANDARD;
+
+  dom.testSizeSelect.innerHTML = "";
+  config.forEach(({ value, label }) => {
+    const opt = document.createElement("option");
+    opt.value = value;
+    opt.textContent = label;
+    dom.testSizeSelect.appendChild(opt);
+  });
+}
+
 function initDarkMode() {
   const btn = document.getElementById("darkModeToggle");
   const icon = document.getElementById("darkModeIcon");
@@ -115,9 +144,6 @@ function init() {
     versionEl.textContent = APP_VERSION;
   }
 
-  // Hide Next button until a session actually starts
-  setNextButtonVisible(false);
-
   console.log("SnowPro App Version:", APP_VERSION);
   console.log("Google Sheets URL:", CONFIG.googleSheetsCsvUrl);
 
@@ -137,65 +163,60 @@ function init() {
     );
   }
 
+  // Default test sizes (Timed practice test)
+  setTestSizeOptions("test");
+
   loadDataBySource(defaultSource);
 
   bindUIEvents({
     onTopicChange: (topic) => {
-      if (currentMode === "practice") {
-        clearSessionSummary();
-        clearTopicCharts();
-        loadTopic(topic || "all");
-      }
+      loadTopic(topic || "all");
     },
+
     onNext: nextQuestion,
-    onSourceChange: loadDataBySource,
 
+    onSourceChange: (source) => {
+      loadDataBySource(source);
+    },
+
+    // Handle "Start test" button (used for Test + Mock modes)
     onStartTest: (size) => {
-      clearSessionSummary();
-      clearTopicCharts();
-
       if (currentMode === "mock") {
         startMockExam(size);
       } else {
-        // treat everything else as timed test
         startTest(size);
       }
     },
 
+    // Handle mode switching
     onModeChange: (mode) => {
       currentMode = mode;
 
-      // Clear current summary + charts
+      // Always reset summary + charts when switching modes
       clearSessionSummary();
       clearTopicCharts();
 
       if (mode === "practice") {
-        // Show timer, start practice on "all" by default
-        if (dom.timerContainer) {
-          dom.timerContainer.classList.remove("d-none");
-        }
+        // Practice by topic
         setNextButtonVisible(true);
+        if (dom.timerContainer) dom.timerContainer.classList.remove("d-none");
         loadTopic("all");
       } else if (mode === "test") {
-        // Hide timer until "Start test" is clicked
-        if (dom.timerContainer) {
-          dom.timerContainer.classList.add("d-none");
-        }
+        // Timed practice test
         setNextButtonVisible(false);
+        if (dom.timerContainer) dom.timerContainer.classList.add("d-none");
+        setTestSizeOptions("test");
+
         renderEmpty('Select a test size and click "Start test" to begin.');
       } else if (mode === "mock") {
-        // Same UX as test mode, but will use mock exam pool
-        if (dom.timerContainer) {
-          dom.timerContainer.classList.add("d-none");
-        }
+        // Mock exam mode
         setNextButtonVisible(false);
+        if (dom.timerContainer) dom.timerContainer.classList.add("d-none");
+        setTestSizeOptions("mock");
+
         renderEmpty(
-          'Select a test size and click "Start test" to begin the mock exam.'
+          'Select an exam size and click "Start test" to begin the Mock Exam.'
         );
-      } else {
-        // No mode selected
-        setNextButtonVisible(false);
-        renderEmpty("Select a mode to begin.");
       }
     },
   });
