@@ -5,6 +5,7 @@ export const dom = {
   // Mode selector
   modePracticeRadio: document.getElementById("modePractice"),
   modeTestRadio: document.getElementById("modeTest"),
+  modeMockRadio: document.getElementById("modeMock"),
 
   // Practice vs Test controls
   practiceControls: document.getElementById("practiceControls"),
@@ -27,6 +28,6 @@ export const dom = {
   testSizeSelect: document.getElementById("testSizeSelect"),
   startTestBtn: document.getElementById("startTestBtn"),
 
-  // Score charts container
+  // Charts container
   scoreCharts: document.getElementById("scoreCharts"),
 };

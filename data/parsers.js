@@ -1,5 +1,3 @@
-// data/parsers.js
-
 // Parse a single CSV line handling quotes and commas
 export function parseCsvLine(line) {
   const result = [];

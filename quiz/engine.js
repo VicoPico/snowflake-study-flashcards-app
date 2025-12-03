@@ -1,4 +1,3 @@
-// quiz/engine.js
 import { getQuestionsByTopic } from "../state.js";
 import { dom } from "../ui/dom.js";
 import { startTimer, stopTimer } from "./timer.js";
@@ -7,17 +6,21 @@ import {
   renderFeedback,
   renderEmpty,
   renderMeta,
-  renderSessionSummary, // NEW
+  renderSessionSummary,
+  clearSessionSummary,
 } from "../ui/render.js";
 
 let currentQuestions = [];
 let currentIndex = 0;
 let isTestMode = false;
+let isMockMode = false;
 let correctCount = 0;
 let answeredCount = 0;
 
 // Per-topic stats { [topic]: { correct, total } }
 let perTopicStats = {};
+// Per-area stats { [areaKey]: { correct, total } }, e.g. "data-loading"
+let perAreaStats = {};
 
 // Simple Fisher–Yates shuffle
 function shuffle(array) {
@@ -58,6 +61,16 @@ function normalizeQuestion(raw) {
   q.correct_indices = arr;
   q.isMulti = Array.isArray(arr) && arr.length > 0;
 
+  // Normalize tags to array of strings
+  if (typeof q.tags === "string") {
+    q.tags = q.tags
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+  } else if (!Array.isArray(q.tags)) {
+    q.tags = [];
+  }
+
   return q;
 }
 
@@ -80,42 +93,75 @@ function evaluateQuestion(question, selectedIndices) {
   }
 }
 
-// Update per-topic stats after each question
-function recordTopicStat(question, isCorrect) {
-  const topic = question.topic || "Unknown";
-  if (!perTopicStats[topic]) {
-    perTopicStats[topic] = { correct: 0, total: 0 };
+// Helper: derive primary area key from tags/topic
+function getPrimaryAreaKey(question) {
+  if (Array.isArray(question.tags) && question.tags.length > 0) {
+    const tag0 = String(question.tags[0] || "")
+      .trim()
+      .toLowerCase();
+    if (tag0) return tag0;
   }
-  perTopicStats[topic].total += 1;
+
+  // Fallback: slugify topic
+  const topic = String(question.topic || "unknown");
+  return topic
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+// Update both per-topic and per-area stats after each question
+function recordStats(question, isCorrect) {
+  const topicKey = question.topic || "Unknown";
+
+  if (!perTopicStats[topicKey]) {
+    perTopicStats[topicKey] = { correct: 0, total: 0 };
+  }
+  perTopicStats[topicKey].total += 1;
   if (isCorrect) {
-    perTopicStats[topic].correct += 1;
+    perTopicStats[topicKey].correct += 1;
+  }
+
+  const areaKey = getPrimaryAreaKey(question);
+  if (!perAreaStats[areaKey]) {
+    perAreaStats[areaKey] = { correct: 0, total: 0 };
+  }
+  perAreaStats[areaKey].total += 1;
+  if (isCorrect) {
+    perAreaStats[areaKey].correct += 1;
   }
 }
 
 function showCurrentQuestion() {
   stopTimer();
 
-  // Ensure the Next button is visible whenever there *is* a question to show
-  if (dom.nextBtn) {
-    dom.nextBtn.classList.remove("d-none");
-    dom.nextBtn.disabled = false;
-  }
-
   if (!currentQuestions.length || currentIndex >= currentQuestions.length) {
-    const baseMessage = isTestMode
-      ? `Test complete. Score: ${correctCount}/${answeredCount || 1}.`
-      : "You have reached the end of the available questions.";
+    const baseMessage =
+      isTestMode || isMockMode
+        ? `Session complete. Score: ${correctCount}/${answeredCount || 1}.`
+        : "You have reached the end of the available questions.";
 
     renderEmpty(baseMessage);
-    // Nice-looking card with per-topic breakdown
+
+    // Decide which stats map to use for summary & charts
+    const useStats = isMockMode ? perAreaStats : perTopicStats;
+    const modeLabel = isMockMode
+      ? "Mock exam"
+      : isTestMode
+      ? "Timed practice test"
+      : "Practice session";
+
+    const labelKind = isMockMode ? "area" : "topic";
+
     renderSessionSummary({
-      perTopicStats,
+      statsMap: useStats,
       correctCount,
       answeredCount,
-      isTestMode,
+      modeLabel,
+      labelKind,
     });
 
-    // Hide Next button when there is nothing else to go to
+    // Hide Next button at the very end
     if (dom.nextBtn) {
       dom.nextBtn.classList.add("d-none");
     }
@@ -125,10 +171,16 @@ function showCurrentQuestion() {
   const raw = currentQuestions[currentIndex];
   const q = normalizeQuestion(raw);
 
+  // Ensure Next button visible while in the middle of a session
+  if (dom.nextBtn) {
+    dom.nextBtn.classList.remove("d-none");
+  }
+
   renderMeta(q, {
     index: currentIndex + 1,
     total: currentQuestions.length,
     isTestMode,
+    isMockMode,
     correctCount,
     answeredCount,
   });
@@ -146,7 +198,7 @@ function showCurrentQuestion() {
     if (isCorrect) {
       correctCount++;
     }
-    recordTopicStat(q, isCorrect);
+    recordStats(q, isCorrect);
 
     renderFeedback(q, {
       selectedIndices,
@@ -202,41 +254,80 @@ export function loadTopic(topic) {
   currentQuestions = arr;
   currentIndex = 0;
   isTestMode = false;
+  isMockMode = false;
   correctCount = 0;
   answeredCount = 0;
-  perTopicStats = {}; // reset per-topic stats
+  perTopicStats = {};
+  perAreaStats = {};
+  clearSessionSummary();
 
   if (!currentQuestions.length) {
     stopTimer();
     renderEmpty("No questions available for this topic.");
-    if (dom.nextBtn) {
-      dom.nextBtn.classList.add("d-none");
-    }
+    if (dom.nextBtn) dom.nextBtn.classList.add("d-none");
     return;
   }
 
   showCurrentQuestion();
 }
 
-// Test mode: build a fixed-size random test
+// Test mode: build a fixed-size random test from all non-mock topics
 export function startTest(size) {
   const qbt = getQuestionsByTopic();
-  const pool = shuffle(Object.values(qbt).flat());
+  let pool = Object.entries(qbt)
+    .filter(([topic]) => !topic.toLowerCase().startsWith("mock exam"))
+    .flatMap(([, arr]) => arr || []);
+
+  pool = shuffle(pool.slice());
 
   const actualSize = Math.min(size, pool.length);
   currentQuestions = pool.slice(0, actualSize);
   currentIndex = 0;
   isTestMode = true;
+  isMockMode = false;
   correctCount = 0;
   answeredCount = 0;
-  perTopicStats = {}; // reset per-topic stats
+  perTopicStats = {};
+  perAreaStats = {};
+  clearSessionSummary();
 
   if (!currentQuestions.length) {
     stopTimer();
     renderEmpty("No questions available to build a test.");
-    if (dom.nextBtn) {
-      dom.nextBtn.classList.add("d-none");
-    }
+    if (dom.nextBtn) dom.nextBtn.classList.add("d-none");
+    return;
+  }
+
+  showCurrentQuestion();
+}
+
+// Mock exam mode: only use topics that start with "Mock Exam"
+export function startMockExam(size) {
+  const qbt = getQuestionsByTopic();
+
+  let pool = Object.entries(qbt)
+    .filter(([topic]) => topic.toLowerCase().startsWith("mock exam"))
+    .flatMap(([, arr]) => arr || []);
+
+  pool = shuffle(pool.slice());
+
+  const actualSize = Math.min(size, pool.length);
+  currentQuestions = pool.slice(0, actualSize);
+  currentIndex = 0;
+  isTestMode = false;
+  isMockMode = true;
+  correctCount = 0;
+  answeredCount = 0;
+  perTopicStats = {};
+  perAreaStats = {};
+  clearSessionSummary();
+
+  if (!currentQuestions.length) {
+    stopTimer();
+    renderEmpty(
+      'No mock exam questions found. Ensure your sheet uses topics like "Mock Exam 1".'
+    );
+    if (dom.nextBtn) dom.nextBtn.classList.add("d-none");
     return;
   }
 
@@ -246,9 +337,7 @@ export function startTest(size) {
 export function nextQuestion() {
   if (!currentQuestions.length) {
     renderEmpty("No questions loaded.");
-    if (dom.nextBtn) {
-      dom.nextBtn.classList.add("d-none");
-    }
+    if (dom.nextBtn) dom.nextBtn.classList.add("d-none");
     return;
   }
 
@@ -257,19 +346,29 @@ export function nextQuestion() {
     showCurrentQuestion();
   } else {
     stopTimer();
-    const baseMessage = isTestMode
-      ? `Test complete. Score: ${correctCount}/${answeredCount || 1}.`
-      : "You have reached the end of the available questions.";
+    const baseMessage =
+      isTestMode || isMockMode
+        ? `Session complete. Score: ${correctCount}/${answeredCount || 1}.`
+        : "You have reached the end of the available questions.";
 
     renderEmpty(baseMessage);
+
+    const useStats = isMockMode ? perAreaStats : perTopicStats;
+    const modeLabel = isMockMode
+      ? "Mock exam"
+      : isTestMode
+      ? "Timed practice test"
+      : "Practice session";
+    const labelKind = isMockMode ? "area" : "topic";
+
     renderSessionSummary({
-      perTopicStats,
+      statsMap: useStats,
       correctCount,
       answeredCount,
-      isTestMode,
+      modeLabel,
+      labelKind,
     });
 
-    // Hide Next button when user reaches the end via manual click
     if (dom.nextBtn) {
       dom.nextBtn.classList.add("d-none");
     }

@@ -1,4 +1,3 @@
-// ui/render.js
 import { dom } from "./dom.js";
 import { renderTopicCharts } from "../quiz/charts.js";
 
@@ -9,9 +8,15 @@ export function renderEmpty(message) {
   if (dom.questionMeta) dom.questionMeta.textContent = "";
 }
 
+// New: clear summary and charts together
+export function clearSessionSummary() {
+  if (dom.feedback) dom.feedback.innerHTML = "";
+  if (dom.scoreCharts) dom.scoreCharts.innerHTML = "";
+}
+
 export function renderMeta(
   question,
-  { index, total, isTestMode, correctCount, answeredCount }
+  { index, total, isTestMode, isMockMode, correctCount, answeredCount }
 ) {
   if (!dom.questionMeta) return;
 
@@ -21,7 +26,7 @@ export function renderMeta(
   if (question.topic) parts.push(`Topic: ${question.topic}`);
   parts.push(`Q ${index} of ${total}`);
 
-  if (isTestMode) {
+  if (isTestMode || isMockMode) {
     parts.push(`Score: ${correctCount}/${answeredCount || 0}`);
   }
 
@@ -161,12 +166,13 @@ export function renderFeedback(
   `;
 }
 
-// NEW: visually nice per-topic summary
+// New: summary that can work with topic-based OR area-based stats
 export function renderSessionSummary({
-  perTopicStats,
+  statsMap,
   correctCount,
   answeredCount,
-  isTestMode,
+  modeLabel,
+  labelKind, // "topic" or "area"
 }) {
   if (!dom.feedback) return;
 
@@ -174,21 +180,23 @@ export function renderSessionSummary({
   const overallPct =
     totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0;
 
-  const entries = Object.entries(perTopicStats || {});
+  const entries = Object.entries(statsMap || {});
   if (!entries.length && totalAnswered === 0) {
     return; // nothing to show
   }
 
+  const labelHeading = labelKind === "area" ? "By knowledge area" : "By topic";
+
   const topicRows = entries
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([topic, stats]) => {
+    .map(([key, stats]) => {
       const pct =
         stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
 
       return `
         <div class="list-group-item bg-transparent px-0">
           <div class="d-flex justify-content-between align-items-center">
-            <strong>${topic}</strong>
+            <strong class="session-summary-label">${key}</strong>
             <span class="badge bg-secondary">${pct}%</span>
           </div>
           <div class="small text-muted mb-1">
@@ -209,8 +217,6 @@ export function renderSessionSummary({
     })
     .join("");
 
-  const modeLabel = isTestMode ? "Timed practice test" : "Practice session";
-
   dom.feedback.innerHTML = `
     <div class="card mt-3 shadow-sm session-summary-card">
       <div class="card-body">
@@ -222,9 +228,11 @@ export function renderSessionSummary({
             Overall: ${correctCount}/${totalAnswered || 0}
           </span>
           <span class="badge bg-info text-dark">
-            ${overallPct}% correct
+            ${overallPct}% correct answers
           </span>
         </div>
+
+        <p class="small text-muted mb-1">${labelHeading}</p>
 
         ${
           topicRows
@@ -233,10 +241,12 @@ export function renderSessionSummary({
             ${topicRows}
           </div>
         `
-            : `<p class="small text-muted mb-0">No topic-level stats available.</p>`
+            : `<p class="small text-muted mb-0">No detailed stats available.</p>`
         }
       </div>
     </div>
   `;
-  renderTopicCharts(perTopicStats);
+
+  // Feed the same stats into the charts
+  renderTopicCharts(statsMap, { labelKind });
 }

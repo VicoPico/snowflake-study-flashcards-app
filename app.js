@@ -2,28 +2,49 @@ import { CONFIG, PASTE_PLACEHOLDER, APP_VERSION } from "./config.js";
 import { setQuestionsByTopic, getTopics } from "./state.js";
 import { showWarning, clearWarning } from "./ui/warnings.js";
 import { bindUIEvents } from "./ui/events.js";
-import { initQuiz, loadTopic, nextQuestion, startTest } from "./quiz/engine.js";
+import {
+  initQuiz,
+  loadTopic,
+  nextQuestion,
+  startTest,
+  startMockExam,
+} from "./quiz/engine.js";
 import { loadFromJson, loadFromGoogleSheets } from "./data/loaders.js";
 import { dom } from "./ui/dom.js";
-import { renderEmpty } from "./ui/render.js";
+import { renderEmpty, clearSessionSummary } from "./ui/render.js";
 import { clearTopicCharts } from "./quiz/charts.js";
 
-// -----------------------------
-// Helper: Next button visibility
-// -----------------------------
-function setNextButtonVisible(flag) {
-  if (!dom.nextBtn) return;
-  if (flag) {
-    dom.nextBtn.classList.remove("d-none");
-    dom.nextBtn.disabled = false;
-  } else {
-    dom.nextBtn.classList.add("d-none");
-  }
+let currentMode = null; // "practice" | "test" | "mock" | null
+
+// Test size presets for different modes
+const TEST_SIZES_STANDARD = [
+  { value: "", label: "Select test size…" },
+  { value: "10", label: "10 questions" },
+  { value: "25", label: "25 questions" },
+  { value: "50", label: "50 questions" },
+  { value: "100", label: "100 questions" },
+];
+
+const TEST_SIZES_MOCK = [
+  { value: "", label: "Select exam size…" },
+  { value: "50", label: "50 questions" },
+  { value: "100", label: "100 questions" },
+];
+
+function setTestSizeOptions(mode = "test") {
+  if (!dom.testSizeSelect) return;
+
+  const config = mode === "mock" ? TEST_SIZES_MOCK : TEST_SIZES_STANDARD;
+
+  dom.testSizeSelect.innerHTML = "";
+  config.forEach(({ value, label }) => {
+    const opt = document.createElement("option");
+    opt.value = value;
+    opt.textContent = label;
+    dom.testSizeSelect.appendChild(opt);
+  });
 }
 
-// -----------------------------
-// Dark mode initialization
-// -----------------------------
 function initDarkMode() {
   const btn = document.getElementById("darkModeToggle");
   const icon = document.getElementById("darkModeIcon");
@@ -54,7 +75,6 @@ function initDarkMode() {
     }
   };
 
-  // Initial state
   apply(isDark);
 
   btn.addEventListener("click", () => {
@@ -63,9 +83,16 @@ function initDarkMode() {
   });
 }
 
-// -----------------------------
-// Data loading
-// -----------------------------
+// Utility from earlier: hide/show Next button
+function setNextButtonVisible(flag) {
+  if (!dom.nextBtn) return;
+  if (flag) {
+    dom.nextBtn.classList.remove("d-none");
+  } else {
+    dom.nextBtn.classList.add("d-none");
+  }
+}
+
 async function loadDataBySource(source) {
   clearWarning();
 
@@ -109,21 +136,13 @@ async function loadDataBySource(source) {
   }
 }
 
-// -----------------------------
-// App initialization
-// -----------------------------
 function init() {
-  // Initialize dark mode toggle
   initDarkMode();
 
-  // Set app version badge
   const versionEl = document.getElementById("appVersion");
   if (versionEl) {
     versionEl.textContent = APP_VERSION;
   }
-
-  // Hide "Next question" by default until a mode actually starts
-  setNextButtonVisible(false);
 
   console.log("SnowPro App Version:", APP_VERSION);
   console.log("Google Sheets URL:", CONFIG.googleSheetsCsvUrl);
@@ -144,47 +163,60 @@ function init() {
     );
   }
 
-  // Timer is hidden initially by HTML (d-none on #timerContainer)
+  // Default test sizes (Timed practice test)
+  setTestSizeOptions("test");
 
-  // Start initial load (questions only; no quiz yet)
   loadDataBySource(defaultSource);
 
-  // Bind UI events, including mode logic
   bindUIEvents({
     onTopicChange: (topic) => {
-      // Only meaningful in practice mode; but safe regardless
       loadTopic(topic || "all");
     },
-    onNext: nextQuestion,
-    onSourceChange: loadDataBySource,
 
-    // Start test: start a fixed-size test.
-    // Timer will show automatically when the first question starts.
-    onStartTest: (size) => {
-      clearTopicCharts(); // clear old test/practice charts
-      startTest(size); // start a fresh test session
+    onNext: nextQuestion,
+
+    onSourceChange: (source) => {
+      loadDataBySource(source);
     },
 
-    // Mode change: decide behavior per mode
+    // Handle "Start test" button (used for Test + Mock modes)
+    onStartTest: (size) => {
+      if (currentMode === "mock") {
+        startMockExam(size);
+      } else {
+        startTest(size);
+      }
+    },
+
+    // Handle mode switching
     onModeChange: (mode) => {
-      // Always clear old charts when changing mode
+      currentMode = mode;
+
+      // Always reset summary + charts when switching modes
+      clearSessionSummary();
       clearTopicCharts();
 
       if (mode === "practice") {
+        // Practice by topic
         setNextButtonVisible(true);
-        if (dom.timerContainer) {
-          dom.timerContainer.classList.remove("d-none");
-        }
-        // Start practice immediately (all topics by default)
+        if (dom.timerContainer) dom.timerContainer.classList.remove("d-none");
         loadTopic("all");
       } else if (mode === "test") {
+        // Timed practice test
         setNextButtonVisible(false);
-        // Hide timer until user clicks "Start test"
-        if (dom.timerContainer) {
-          dom.timerContainer.classList.add("d-none");
-        }
-        // Clear question area and wait for Start test
+        if (dom.timerContainer) dom.timerContainer.classList.add("d-none");
+        setTestSizeOptions("test");
+
         renderEmpty('Select a test size and click "Start test" to begin.');
+      } else if (mode === "mock") {
+        // Mock exam mode
+        setNextButtonVisible(false);
+        if (dom.timerContainer) dom.timerContainer.classList.add("d-none");
+        setTestSizeOptions("mock");
+
+        renderEmpty(
+          'Select an exam size and click "Start test" to begin the Mock Exam.'
+        );
       }
     },
   });

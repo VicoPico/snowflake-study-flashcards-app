@@ -1,5 +1,3 @@
-// state.js
-
 export const state = {
   questionsByTopic: {},
   currentQuestions: [],

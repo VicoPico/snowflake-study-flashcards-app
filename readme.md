@@ -5,7 +5,7 @@ Live Application: https://vicopico.github.io/snowflake-study-flashcards-app/
 A modern, lightweight web-based quiz application for studying the SnowPro Core Certification.
 Fully client-side, fast, and designed to make Snowflake exam preparation enjoyable and efficient.
 
-Built with Vanilla JavaScript, Bootstrap 5, and optional integration with a shared Google Sheets question bank..
+Built with Vanilla JavaScript, Bootstrap 5, and optional integration with a shared Google Sheets question bank.
 
 ---
 
@@ -15,18 +15,21 @@ Built with Vanilla JavaScript, Bootstrap 5, and optional integration with a shar
 
 - Practice by topic
 - Timed practice tests (10, 25, 50, or 100 randomized questions)
+- Mock exam mode (50 or 100 randomized exam questions)
 
 #### Smart Feedback & Scoring
 
 - Immediate explanations after each question
 - Supports single-choice and multi-select question types
-- Clean navigation flow
+- Seamless navigation and clean UI interactions
+- Automatic session reset when switching modes
 
 #### Performance Analytics
 
 After each session, the app displays:
 
-- Per-topic accuracy
+- Per-topic accuracy in Timed practice tests
+- Per-area accuracy in Mock exam mode
 - Total questions answered per topic
 - Overall accuracy (donut chart)
 - A clean and consistent summary card aligned with Snowflake’s design

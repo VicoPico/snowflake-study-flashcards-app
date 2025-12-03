@@ -1,19 +1,19 @@
 import { dom } from "./dom.js";
 
 function setModeUI(mode) {
-  if (!dom.practiceControls || !dom.testControls) return;
+  const practice = dom.practiceControls;
+  const test = dom.testControls;
 
-  if (mode === "test") {
-    // Only switch visible controls; timer is handled in app.js
-    dom.practiceControls.classList.add("d-none");
-    dom.testControls.classList.remove("d-none");
-  } else if (mode === "practice") {
-    dom.practiceControls.classList.remove("d-none");
-    dom.testControls.classList.add("d-none");
+  if (mode === "practice") {
+    if (practice) practice.classList.remove("d-none");
+    if (test) test.classList.add("d-none");
+  } else if (mode === "test" || mode === "mock") {
+    if (practice) practice.classList.add("d-none");
+    if (test) test.classList.remove("d-none"); // Start button lives here
   } else {
     // No mode selected: hide both
-    dom.practiceControls.classList.add("d-none");
-    dom.testControls.classList.add("d-none");
+    if (practice) practice.classList.add("d-none");
+    if (test) test.classList.add("d-none");
   }
 }
 
@@ -37,38 +37,36 @@ export function bindUIEvents({
       onSourceChange(dom.dataSourceSelect.value);
   }
 
-  // Mode radio buttons: Practice vs Test
-  if (dom.modePracticeRadio && dom.modeTestRadio) {
+  // Mode radios
+  const modeRadios = [
+    dom.modePracticeRadio,
+    dom.modeTestRadio,
+    dom.modeMockRadio,
+  ].filter(Boolean);
+
+  if (modeRadios.length && onModeChange) {
     const handleModeChange = () => {
       let mode = null;
-      if (dom.modeTestRadio.checked) mode = "test";
-      if (dom.modePracticeRadio.checked) mode = "practice";
 
-      // Just toggle layout here
+      if (dom.modePracticeRadio?.checked) mode = "practice";
+      if (dom.modeTestRadio?.checked) mode = "test";
+      if (dom.modeMockRadio?.checked) mode = "mock";
+
       setModeUI(mode);
-
-      // Let app.js decide behavior (timer, loading questions, etc.)
-      if (mode && onModeChange) {
-        onModeChange(mode);
-      }
+      if (mode) onModeChange(mode);
     };
 
-    dom.modePracticeRadio.onchange = handleModeChange;
-    dom.modeTestRadio.onchange = handleModeChange;
-
-    // Initial state: no mode selected, no controls visible
-    setModeUI(null);
+    modeRadios.forEach((radio) => (radio.onchange = handleModeChange));
+    setModeUI(null); // nothing selected initially
   }
 
-  // Start test button
+  // Start button
   if (dom.startTestBtn && dom.testSizeSelect && onStartTest) {
     dom.startTestBtn.onclick = () => {
       const sizeValue = dom.testSizeSelect.value;
       if (!sizeValue) return;
-
       const size = parseInt(sizeValue, 10);
       if (!size || size <= 0) return;
-
       onStartTest(size);
     };
   }

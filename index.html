@@ -68,9 +68,9 @@
             id="modePractice"
             value="practice"
           />
-          <label class="form-check-label" for="modePractice"
-            >Practice by topic</label
-          >
+          <label class="form-check-label" for="modePractice">
+            Practice by topic
+          </label>
         </div>
         <div class="form-check form-check-inline">
           <input
@@ -80,18 +80,26 @@
             id="modeTest"
             value="test"
           />
-          <label class="form-check-label" for="modeTest"
-            >Timed practice test</label
-          >
+          <label class="form-check-label" for="modeTest">
+            Timed practice test
+          </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="mode"
+            id="modeMock"
+            value="mock"
+          />
+          <label class="form-check-label" for="modeMock"> Mock exam </label>
         </div>
       </div>
-
       <!-- Practice Controls (Topic-based) -->
       <div id="practiceControls" class="mb-3 d-none">
         <label for="topicSelect" class="form-label">Topic</label>
         <select id="topicSelect" class="form-select"></select>
       </div>
-
       <!-- Test Controls (Fixed-size test) -->
       <div id="testControls" class="mb-3 d-none">
         <label for="testSizeSelect" class="form-label"
