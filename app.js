@@ -2,26 +2,20 @@ import { CONFIG, PASTE_PLACEHOLDER, APP_VERSION } from "./config.js";
 import { setQuestionsByTopic, getTopics } from "./state.js";
 import { showWarning, clearWarning } from "./ui/warnings.js";
 import { bindUIEvents } from "./ui/events.js";
-import { initQuiz, loadTopic, nextQuestion, startTest } from "./quiz/engine.js";
+import {
+  initQuiz,
+  loadTopic,
+  nextQuestion,
+  startTest,
+  startMockExam,
+} from "./quiz/engine.js";
 import { loadFromJson, loadFromGoogleSheets } from "./data/loaders.js";
 import { dom } from "./ui/dom.js";
-import { renderEmpty } from "./ui/render.js";
+import { renderEmpty, clearSessionSummary } from "./ui/render.js";
 import { clearTopicCharts } from "./quiz/charts.js";
 
-// Track current high-level mode for tests
-let currentMode = null; // "practice" | "test" | "mock"
+let currentMode = null; // "practice" | "test" | "mock" | null
 
-// Helper: show/hide "Next question" button
-function setNextButtonVisible(show) {
-  if (!dom.nextBtn) return;
-  if (show) {
-    dom.nextBtn.classList.remove("d-none");
-  } else {
-    dom.nextBtn.classList.add("d-none");
-  }
-}
-
-// Dark mode init (your previous logic)
 function initDarkMode() {
   const btn = document.getElementById("darkModeToggle");
   const icon = document.getElementById("darkModeIcon");
@@ -52,13 +46,22 @@ function initDarkMode() {
     }
   };
 
-  // Initial state
   apply(isDark);
 
   btn.addEventListener("click", () => {
     const currentlyDark = document.body.classList.contains("dark-mode");
     apply(!currentlyDark);
   });
+}
+
+// Utility from earlier: hide/show Next button
+function setNextButtonVisible(flag) {
+  if (!dom.nextBtn) return;
+  if (flag) {
+    dom.nextBtn.classList.remove("d-none");
+  } else {
+    dom.nextBtn.classList.add("d-none");
+  }
 }
 
 async function loadDataBySource(source) {
@@ -105,16 +108,14 @@ async function loadDataBySource(source) {
 }
 
 function init() {
-  // Dark mode
   initDarkMode();
 
-  // App version badge
   const versionEl = document.getElementById("appVersion");
   if (versionEl) {
     versionEl.textContent = APP_VERSION;
   }
 
-  // Initially, no mode selected: hide Next
+  // Hide Next button until a session actually starts
   setNextButtonVisible(false);
 
   console.log("SnowPro App Version:", APP_VERSION);
@@ -136,70 +137,63 @@ function init() {
     );
   }
 
-  // Timer is hidden initially by HTML (d-none on #timerContainer)
-
-  // Load data (questions) for the chosen source
   loadDataBySource(defaultSource);
 
-  // Bind UI events, including mode logic
   bindUIEvents({
     onTopicChange: (topic) => {
-      // Only meaningful in practice mode; but safe regardless
-      loadTopic(topic || "all");
+      if (currentMode === "practice") {
+        clearSessionSummary();
+        clearTopicCharts();
+        loadTopic(topic || "all");
+      }
     },
     onNext: nextQuestion,
     onSourceChange: loadDataBySource,
 
     onStartTest: (size) => {
-      // Start a test-like session (timed or mock) with the current mode
-      const modeForTest = currentMode === "mock" ? "mock" : "test";
-      startTest(size, { mode: modeForTest });
+      clearSessionSummary();
+      clearTopicCharts();
 
-      // Once the test actually starts, Next becomes relevant
-      setNextButtonVisible(true);
-
-      // Show timer for tests (handled by engine when showing questions)
-      if (dom.timerContainer) {
-        dom.timerContainer.classList.remove("d-none");
+      if (currentMode === "mock") {
+        startMockExam(size);
+      } else {
+        // treat everything else as timed test
+        startTest(size);
       }
     },
 
     onModeChange: (mode) => {
       currentMode = mode;
-      // Clear any leftover charts when switching modes
+
+      // Clear current summary + charts
+      clearSessionSummary();
       clearTopicCharts();
 
       if (mode === "practice") {
-        // Show timer in practice mode
+        // Show timer, start practice on "all" by default
         if (dom.timerContainer) {
           dom.timerContainer.classList.remove("d-none");
         }
         setNextButtonVisible(true);
-        // Start practice immediately (all topics by default)
         loadTopic("all");
       } else if (mode === "test") {
-        // Hide timer until user clicks "Start test"
+        // Hide timer until "Start test" is clicked
         if (dom.timerContainer) {
           dom.timerContainer.classList.add("d-none");
         }
         setNextButtonVisible(false);
-        renderEmpty(
-          'Select a test size and click "Start test" to begin a timed practice test.'
-        );
+        renderEmpty('Select a test size and click "Start test" to begin.');
       } else if (mode === "mock") {
-        // Hide timer until user clicks "Start test"
+        // Same UX as test mode, but will use mock exam pool
         if (dom.timerContainer) {
           dom.timerContainer.classList.add("d-none");
         }
         setNextButtonVisible(false);
         renderEmpty(
-          'Select a test size and click "Start test" to begin a mock exam.'
+          'Select a test size and click "Start test" to begin the mock exam.'
         );
       } else {
         // No mode selected
-        if (dom.timerContainer) {
-          dom.timerContainer.classList.add("d-none");
-        }
         setNextButtonVisible(false);
         renderEmpty("Select a mode to begin.");
       }

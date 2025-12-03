@@ -1,4 +1,3 @@
-// ui/dom.js
 export const dom = {
   dataSourceWarning: document.getElementById("dataSourceWarning"),
   dataSourceSelect: document.getElementById("dataSourceSelect"),
@@ -29,6 +28,6 @@ export const dom = {
   testSizeSelect: document.getElementById("testSizeSelect"),
   startTestBtn: document.getElementById("startTestBtn"),
 
-  // Charts (session summary)
+  // Charts container
   scoreCharts: document.getElementById("scoreCharts"),
 };

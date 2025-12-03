@@ -7,22 +7,20 @@ import {
   renderEmpty,
   renderMeta,
   renderSessionSummary,
+  clearSessionSummary,
 } from "../ui/render.js";
 
-// Internal state
 let currentQuestions = [];
 let currentIndex = 0;
-
-// Mode flags
-// "test-like" means either Timed practice test OR Mock exam
-let isTestLike = false;
-let isMockExam = false;
-
+let isTestMode = false;
+let isMockMode = false;
 let correctCount = 0;
 let answeredCount = 0;
 
 // Per-topic stats { [topic]: { correct, total } }
 let perTopicStats = {};
+// Per-area stats { [areaKey]: { correct, total } }, e.g. "data-loading"
+let perAreaStats = {};
 
 // Simple Fisher–Yates shuffle
 function shuffle(array) {
@@ -36,7 +34,7 @@ function shuffle(array) {
 function normalizeQuestion(raw) {
   const q = { ...raw };
 
-  // Normalize correct_index (single-answer)
+  // Normalize correct_index
   if (typeof q.correct_index === "string") {
     const ci = parseInt(q.correct_index, 10);
     q.correct_index = isNaN(ci) ? 0 : ci;
@@ -63,6 +61,16 @@ function normalizeQuestion(raw) {
   q.correct_indices = arr;
   q.isMulti = Array.isArray(arr) && arr.length > 0;
 
+  // Normalize tags to array of strings
+  if (typeof q.tags === "string") {
+    q.tags = q.tags
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+  } else if (!Array.isArray(q.tags)) {
+    q.tags = [];
+  }
+
   return q;
 }
 
@@ -85,35 +93,42 @@ function evaluateQuestion(question, selectedIndices) {
   }
 }
 
-// Per-topic stats update
-function recordTopicStat(question, isCorrect) {
-  const topic = question.topic || "Unknown";
-  if (!perTopicStats[topic]) {
-    perTopicStats[topic] = { correct: 0, total: 0 };
+// Helper: derive primary area key from tags/topic
+function getPrimaryAreaKey(question) {
+  if (Array.isArray(question.tags) && question.tags.length > 0) {
+    const tag0 = String(question.tags[0] || "")
+      .trim()
+      .toLowerCase();
+    if (tag0) return tag0;
   }
-  perTopicStats[topic].total += 1;
-  if (isCorrect) {
-    perTopicStats[topic].correct += 1;
-  }
+
+  // Fallback: slugify topic
+  const topic = String(question.topic || "unknown");
+  return topic
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
-function endOfSession() {
-  const baseMessage = isTestLike
-    ? `Test complete. Score: ${correctCount}/${answeredCount || 1}.`
-    : "You have reached the end of the available questions.";
+// Update both per-topic and per-area stats after each question
+function recordStats(question, isCorrect) {
+  const topicKey = question.topic || "Unknown";
 
-  renderEmpty(baseMessage);
+  if (!perTopicStats[topicKey]) {
+    perTopicStats[topicKey] = { correct: 0, total: 0 };
+  }
+  perTopicStats[topicKey].total += 1;
+  if (isCorrect) {
+    perTopicStats[topicKey].correct += 1;
+  }
 
-  renderSessionSummary({
-    perTopicStats,
-    correctCount,
-    answeredCount,
-    isTestMode: isTestLike,
-    isMockExam,
-  });
-
-  if (dom.nextBtn) {
-    dom.nextBtn.classList.add("d-none");
+  const areaKey = getPrimaryAreaKey(question);
+  if (!perAreaStats[areaKey]) {
+    perAreaStats[areaKey] = { correct: 0, total: 0 };
+  }
+  perAreaStats[areaKey].total += 1;
+  if (isCorrect) {
+    perAreaStats[areaKey].correct += 1;
   }
 }
 
@@ -121,25 +136,54 @@ function showCurrentQuestion() {
   stopTimer();
 
   if (!currentQuestions.length || currentIndex >= currentQuestions.length) {
-    endOfSession();
+    const baseMessage =
+      isTestMode || isMockMode
+        ? `Session complete. Score: ${correctCount}/${answeredCount || 1}.`
+        : "You have reached the end of the available questions.";
+
+    renderEmpty(baseMessage);
+
+    // Decide which stats map to use for summary & charts
+    const useStats = isMockMode ? perAreaStats : perTopicStats;
+    const modeLabel = isMockMode
+      ? "Mock exam"
+      : isTestMode
+      ? "Timed practice test"
+      : "Practice session";
+
+    const labelKind = isMockMode ? "area" : "topic";
+
+    renderSessionSummary({
+      statsMap: useStats,
+      correctCount,
+      answeredCount,
+      modeLabel,
+      labelKind,
+    });
+
+    // Hide Next button at the very end
+    if (dom.nextBtn) {
+      dom.nextBtn.classList.add("d-none");
+    }
     return;
   }
 
   const raw = currentQuestions[currentIndex];
   const q = normalizeQuestion(raw);
 
-  renderMeta(q, {
-    index: currentIndex + 1,
-    total: currentQuestions.length,
-    isTestMode: isTestLike,
-    correctCount,
-    answeredCount,
-  });
-
-  // We are in the middle of a session: ensure Next button is visible
+  // Ensure Next button visible while in the middle of a session
   if (dom.nextBtn) {
     dom.nextBtn.classList.remove("d-none");
   }
+
+  renderMeta(q, {
+    index: currentIndex + 1,
+    total: currentQuestions.length,
+    isTestMode,
+    isMockMode,
+    correctCount,
+    answeredCount,
+  });
 
   let answered = false;
 
@@ -154,7 +198,7 @@ function showCurrentQuestion() {
     if (isCorrect) {
       correctCount++;
     }
-    recordTopicStat(q, isCorrect);
+    recordStats(q, isCorrect);
 
     renderFeedback(q, {
       selectedIndices,
@@ -209,13 +253,13 @@ export function loadTopic(topic) {
 
   currentQuestions = arr;
   currentIndex = 0;
-
-  // Practice mode flags
-  isTestLike = false;
-  isMockExam = false;
+  isTestMode = false;
+  isMockMode = false;
   correctCount = 0;
   answeredCount = 0;
   perTopicStats = {};
+  perAreaStats = {};
+  clearSessionSummary();
 
   if (!currentQuestions.length) {
     stopTimer();
@@ -227,44 +271,62 @@ export function loadTopic(topic) {
   showCurrentQuestion();
 }
 
-// Test mode: build a fixed-size random test (timed or mock)
-export function startTest(size, options = {}) {
-  const { mode = "test" } = options;
-
+// Test mode: build a fixed-size random test from all non-mock topics
+export function startTest(size) {
   const qbt = getQuestionsByTopic();
+  let pool = Object.entries(qbt)
+    .filter(([topic]) => !topic.toLowerCase().startsWith("mock exam"))
+    .flatMap(([, arr]) => arr || []);
 
-  let poolArray = [];
-  if (mode === "mock") {
-    // Prefer topics that look like mock exam topics (e.g. "Mock Exam 1")
-    for (const [topic, questions] of Object.entries(qbt)) {
-      if (topic.toLowerCase().startsWith("mock")) {
-        poolArray = poolArray.concat(questions);
-      }
-    }
-    // If none found yet, gracefully fall back to all questions
-    if (!poolArray.length) {
-      poolArray = Object.values(qbt).flat();
-    }
-  } else {
-    // Normal timed test: use all questions
-    poolArray = Object.values(qbt).flat();
-  }
+  pool = shuffle(pool.slice());
 
-  const pool = shuffle(poolArray.slice());
   const actualSize = Math.min(size, pool.length);
-
   currentQuestions = pool.slice(0, actualSize);
   currentIndex = 0;
-
-  isTestLike = true;
-  isMockExam = mode === "mock";
+  isTestMode = true;
+  isMockMode = false;
   correctCount = 0;
   answeredCount = 0;
   perTopicStats = {};
+  perAreaStats = {};
+  clearSessionSummary();
 
   if (!currentQuestions.length) {
     stopTimer();
     renderEmpty("No questions available to build a test.");
+    if (dom.nextBtn) dom.nextBtn.classList.add("d-none");
+    return;
+  }
+
+  showCurrentQuestion();
+}
+
+// Mock exam mode: only use topics that start with "Mock Exam"
+export function startMockExam(size) {
+  const qbt = getQuestionsByTopic();
+
+  let pool = Object.entries(qbt)
+    .filter(([topic]) => topic.toLowerCase().startsWith("mock exam"))
+    .flatMap(([, arr]) => arr || []);
+
+  pool = shuffle(pool.slice());
+
+  const actualSize = Math.min(size, pool.length);
+  currentQuestions = pool.slice(0, actualSize);
+  currentIndex = 0;
+  isTestMode = false;
+  isMockMode = true;
+  correctCount = 0;
+  answeredCount = 0;
+  perTopicStats = {};
+  perAreaStats = {};
+  clearSessionSummary();
+
+  if (!currentQuestions.length) {
+    stopTimer();
+    renderEmpty(
+      'No mock exam questions found. Ensure your sheet uses topics like "Mock Exam 1".'
+    );
     if (dom.nextBtn) dom.nextBtn.classList.add("d-none");
     return;
   }
@@ -284,6 +346,31 @@ export function nextQuestion() {
     showCurrentQuestion();
   } else {
     stopTimer();
-    endOfSession();
+    const baseMessage =
+      isTestMode || isMockMode
+        ? `Session complete. Score: ${correctCount}/${answeredCount || 1}.`
+        : "You have reached the end of the available questions.";
+
+    renderEmpty(baseMessage);
+
+    const useStats = isMockMode ? perAreaStats : perTopicStats;
+    const modeLabel = isMockMode
+      ? "Mock exam"
+      : isTestMode
+      ? "Timed practice test"
+      : "Practice session";
+    const labelKind = isMockMode ? "area" : "topic";
+
+    renderSessionSummary({
+      statsMap: useStats,
+      correctCount,
+      answeredCount,
+      modeLabel,
+      labelKind,
+    });
+
+    if (dom.nextBtn) {
+      dom.nextBtn.classList.add("d-none");
+    }
   }
 }
