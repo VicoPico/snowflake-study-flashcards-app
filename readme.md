@@ -7,15 +7,13 @@ Fully client-side, fast, and designed to make Snowflake exam preparation enjoyab
 
 Built with Vanilla JavaScript, Bootstrap 5, and optional integration with a shared Google Sheets question bank.
 
----
-
 ## Features
 
 #### Study Modes
 
 - Practice by topic
 - Timed practice tests (10, 25, 50, or 100 randomized questions)
-- Mock exam mode (50 or 100 randomized exam questions)
+- Mock exam mode (50 or 100 randomized exam-like questions)
 
 #### Smart Feedback & Scoring
 
@@ -58,8 +56,6 @@ After each session, the app displays:
 - Works on any static hosting environment
 - Easy to extend with additional questions or topics
 
----
-
 ## How to Run
 
 Simply open `index.html` in your browser.
@@ -74,9 +70,7 @@ This project runs correctly on:
 
 No server or build process is required.
 
-⸻
-
-Using a Google Sheets Question Bank
+#### Using a Google Sheets Question Bank
 
 1. Create your question set in Google Sheets.
 2. Publish it as CSV:
@@ -92,21 +86,15 @@ export const CONFIG = {
 };
 ```
 
----
-
 ## Notes
 
 - The published Google Sheets URL is intentionally stored directly in config.js to provide a shared, authoritative question source.
 - If loading the sheet fails, the app automatically falls back to the bundled questions.json.
 
----
-
 ## License
 
 This project is licensed under the **MIT License**.
 See [LICENSE](LICENSE) file for details.
-
----
 
 ## Contributing
 
